@@ -23,8 +23,8 @@ if (!$meId) {
 				$pass = md5($pass);
 
 				$query = sprintf(
-					"INSERT INTO users (name, pass, first_name, last_name)
-					VALUES ('%s', '%s', '%s', '%s')",
+					"INSERT INTO users (name, pass, first_name, last_name, email, date_created)
+					VALUES ('%s', '%s', '%s', '%s', 'bangnx@gmail.com', '0000-00-00')",
 					$name, $pass, $first_name, $last_name
 				);
 
