@@ -1,0 +1,91 @@
+body {
+	height: 0;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+.w3-dropdown-content {
+	position: fixed;
+}
+
+.w3-padding-top {
+	padding-top: 8px!important;
+}
+.w3-padding-bottom {
+	padding-bottom: 8px!important;
+}
+.w3-padding-left {
+	padding-left: 16px!important;
+}
+.w3-padding-right {
+	padding-right: 16px!important;
+}
+.w3-hover-border:hover {
+	outline: solid 1px #ddd!important;
+	outline-offset: -1px!important;
+}
+.w3-ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.w3-pointer {
+	cursor: pointer;
+}
+.w3-noevent {
+	pointer-events: none;
+}
+
+.anim-show-modal {
+	animation: modal 0.2s;
+	pointer-events: none!important;
+}
+.anim-hide-modal {
+	animation: modal 0.2s reverse forwards;
+	pointer-events: none!important;
+}
+
+@keyframes modal {
+	0% {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+#header {
+	position: relative;
+	padding: 6px 8px;
+}
+#search {
+	border-right: 0!important;
+	border-radius: 4px 0 0 4px;
+}
+#btnSearch {
+	border-radius: 0 4px 4px 0;
+}
+.userIcon {
+	width: 40px;
+	height: 40px;
+	border: solid 2px #444;
+}
+#sidebar {
+	width: 240px;
+	padding-top: 12px;
+	z-index: -1;
+}
+#sidebar> * {
+	padding-left: 24px;
+}
+#sidebar:not([style*="display: none"]) + #main {
+	margin-left: 240px;
+}
+#main {
+	z-index: -1;
+	transition: margin-left 0s;
+}
