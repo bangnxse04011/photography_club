@@ -20,12 +20,14 @@ if (!$meId) {
 					$_SESSION['id'] = $me['id'];
 				}
 				else {
-					die('Mật khẩu không đúng.');
+					die('Wrong username or password.');
 				}
 			}
 			else {
-				die('Tên tài khoản không tồn tại.');
+				die('Username does not exit, try again.');
 			}
+		} else {
+			die('Error, try again.');
 		}
 	}
 }
