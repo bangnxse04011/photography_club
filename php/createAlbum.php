@@ -1,31 +1,38 @@
 <?php
-include 'util.php';
+require 'util.php';
 
-$name = $_POST['name'];
+$name = trim($_POST['name']);
 $date = $_POST['date'];
 $location = $_POST['location'];
 
 if (
+	$meId &&
 	preg_match('/^.{1,200}$/', $name) &&
-	(preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date) || !$date)
+	(preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date) || !$date) &&
+	preg_match('/^.{0,200}$/', $location)
 ) {
-	$query = sprintf("SELECT id FROM albums WHERE name='%s'", $name);
+	$stm = $con->prepare("SELECT count(*) FROM albums WHERE name=? AND status=1");
+	$stm->bind_param('s', $name);
+	$stm->execute();
 
-	if ($rs = $con->query($query)) {
-		if ($rs->num_rows) {
+	if ($rs = $stm->get_result()) {
+		if ($rs->fetch_row()[0]) {
 			die('Tên album đã tồn tại.');
 		}
 		else {
 			$now = date('Y-m-d H:i:s');
 
-			$query = sprintf(
-				"INSERT INTO albums (name, date, location, date_created, date_last_upload, user_id)
-				VALUES ('%s', '%s', '%s', '%s', '%s', %d)",
-				$name, $date, $location, $now, $now, $meId
+			$stm = $con->prepare(
+				"INSERT INTO albums (name, date, location, date_created, date_last_upload, user_id, status)
+				VALUES (?, ?, ?, ?, ?, ?, 1)"
 			);
+			$stm->bind_param('sssssi', $name, $date, $location, $now, $now, $meId);
 
-			if (!$con->query($query)) {
-				die('Đã xảy ra lỗi, không thể thêm album.');
+			if (!$stm->execute()) {
+				die('Thêm album thất bại.');
+			}
+			else {
+				echo $con->insert_id;
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 <?php
-include 'php/util.php';
+require 'php/util.php';
 ?>
 
 <!DOCTYPE html>
@@ -11,50 +11,47 @@ include 'php/util.php';
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&amp;subset=latin-ext,vietnamese" rel="stylesheet">
 	<link rel="stylesheet" href="css/style.css">
+	<?php if (file_exists("css/$view.css")) { ?>
+	<link rel="stylesheet" href="css/<?php echo $view ?>.css">
+	<?php } ?>
+
+	<link rel="prefetch" href="https://png.icons8.com/office/80/picture.png">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.min.js"></script>
+	<script src="https://apis.google.com/js/api:client.js"></script>
 
 	<script>
 		$(function() {
 			"use strict";
 
-			let view, meId, me;
-
-			view = new URLSearchParams(location.search).get("view");
-			meId = <?php echo $meId ?>;
-			me = <?php
-				$tmp = $me;
-				unset($tmp['pass']);
-				echo json_encode($tmp);
-			?>;
-
 			<?php
-			include 'js/func.js';
-			include 'js/modal.js';
-			include 'js/script.js';
+			require 'js/init.php';
+			require 'js/social.js';
+			require 'js/func.js';
+			require 'js/modal.js';
+			require 'js/script.js';
 			?>
+
+			(function() {
+				<?php if (file_exists("js/$view.js")) require "js/$view.js" ?>
+			})();
 		});
 	</script>
 </head>
 <body class="w3-light-gray">
-	<?php
-	include 'html/header.php';
-	include 'html/sidebar.php';
-	?>
+	<?php require 'html/header.php' ?>
 
-	<div id="main">
-		<?php
-		if (isset($_GET['view'])) {
-			include 'html/'.$_GET['view'].'.php';
-		}
-		else {
-			include 'html/home.php';
-		}
-		?>
+	<div id="section">
+		<?php require 'html/sidebar.php' ?>
+
+		<div id="main">
+			<?php require "html/$view.php" ?>
+		</div>
 	</div>
 
 	<?php
-	include 'html/footer.php';
+	require 'html/footer.php';
 	?>
 </body>
 </html>

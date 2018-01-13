@@ -1,3 +1,11 @@
+$(window)
+	.resize(function(event) {
+		$("#section").css({
+			paddingTop: $("#header").innerHeight()
+		});
+	})
+	.resize();
+
 if (!meId) {
 	$(".btnRegister").click(event => {
 		Modal.register();
@@ -14,4 +22,8 @@ $("#btnSidebar").click(event => {
 
 $(".upload").click(event => {
 	Modal[meId ? "upload" : "login"]();
+});
+
+$(".setting").click(event => {
+	Modal.setting();
 });

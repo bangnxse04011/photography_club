@@ -7,10 +7,10 @@
 		<img src="https://png.icons8.com/material/24/000000/time-machine.png">
 		<span class="w3-margin-left">Lịch sử</span>
 	</a>
-	<a href="#" class="w3-bar-item w3-button">
+	<div class="w3-bar-item w3-button setting">
 		<img src="https://png.icons8.com/material/24/000000/settings.png">
 		<span class="w3-margin-left">Cài đặt</span>
-	</a>
+	</div>
 	<div class="w3-bar-item w3-button upload">
 		<img src="https://png.icons8.com/material/24/000000/upload.png">
 		<span class="w3-margin-left">Tải lên</span>

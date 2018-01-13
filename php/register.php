@@ -1,38 +1,62 @@
 <?php
-include 'util.php';
+require 'util.php';
 
 if (!$meId) {
 	$name = $_POST['name'];
 	$pass = $_POST['pass'];
 	$first_name = $_POST['first_name'];
 	$last_name = $_POST['last_name'];
+	$email = $_POST['email'];
 
 	if (
 		preg_match('/^[a-zA-Z\d_\-]{6,50}$/', $name) &&
 		preg_match('/^.{6,50}$/', $pass) &&
 		preg_match('/^.{1,50}$/', $first_name) &&
-		preg_match('/^.{1,50}$/', $last_name)
+		preg_match('/^.{1,50}$/', $last_name) &&
+		(preg_match($regex['email'], $email) || !$email)
 	) {
-		$query = sprintf("SELECT id FROM users WHERE name='%s'", $name);
+		$stm = $con->prepare("SELECT id FROM users WHERE name=?");
+		$stm->bind_param('s', $name);
+		$stm->execute();
 
-		if ($rs = $con->query($query)) {
+		if ($rs = $stm->get_result()) {
 			if ($rs->num_rows) {
 				die('Tên tài khoản đã tồn tại.');
 			}
 			else {
-				$pass = md5($pass);
+				$pass = md5(sha1($pass.SALT.$name));
+				$date_created = date('Y-m-d');
 
-				$query = sprintf(
-					"INSERT INTO users (name, pass, first_name, last_name)
-					VALUES ('%s', '%s', '%s', '%s')",
-					$name, $pass, $first_name, $last_name
+				$con->begin_transaction();
+
+				$stm = $con->prepare(
+					"INSERT INTO users (name, pass, first_name, last_name, email, date_created, status)
+					VALUES (?, ?, ?, ?, ?, ?, 1)"
 				);
+				$stm->bind_param('ssssss', $name, $pass, $first_name, $last_name, $email, $date_created);
 
-				if ($con->query($query)) {
-					$_SESSION['id'] = $con->insert_id;
+				if ($stm->execute()) {
+					$stm = $con->prepare(
+						"INSERT INTO users_setting ()
+						VALUES ()"
+					);
+
+					if ($stm->execute()) {
+						$_SESSION['id'] = $con->insert_id;
+
+						$con->commit();
+					}
+					else {
+						$con->rollback();
+					}
+				}
+				else {
+					$con->rollback();
 				}
 			}
 		}
+
+		$stm->close();
 	}
 }
 

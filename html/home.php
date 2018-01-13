@@ -1,15 +1,9 @@
-<div class="w3-row w3-padding">
-	<?php
-	$_start = isset($_GET['start']) ? $_GET['start'] : 0;
-
-	$albums = getAllAlbum($_start);
-
-	foreach ($albums as $album) {
-		?>
-		<div class="w3-col s12 m4 l3">
-			
-		</div>
-		<?php
-	}
-	?>
+<div class="w3-padding">
+	<h6 class="w3-container">
+		<b>Album của tôi</b>
+	</h6>
+	<div class="w3-row-padding" id="homeMyAlbum"></div>
+	<div class="w3-padding w3-text-dark-gray">
+		<a href="?view=albums">Xem thêm &raquo;</a>
+	</div>
 </div>
