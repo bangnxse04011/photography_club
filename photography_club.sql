@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 20, 2018 at 09:42 AM
+-- Generation Time: Jan 20, 2018 at 10:33 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -86,6 +86,7 @@ INSERT INTO `imgs` (`id`, `name`, `album_id`, `date_upload`, `type`, `status`) V
 CREATE TABLE `upload_histories` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `act` enum('download','upload','','') COLLATE utf8_unicode_ci NOT NULL,
   `album_id` int(11) NOT NULL,
   `img_id` int(11) NOT NULL,
   `date` datetime NOT NULL
