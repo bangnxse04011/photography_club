@@ -3,7 +3,8 @@ function getAlbum({
 	start = 0,
 	len = 20,
 	elm,
-	imgId
+	imgId,
+	col = 3
 } = {}) {
 	elm = $(elm);
 
@@ -12,7 +13,26 @@ function getAlbum({
 	function load(imgId) {
 		$.getJSON("php/getAlbum.php", {id, start, len}, album => {
 			if (album) {
-				elm.find(".name").text(album.name);
+				elm
+					.find(".name")
+						.text(album.name)
+						.end()
+					.find(".date")
+						.text(dateStr(album.date))
+						.end()
+					.find(".date_last_upload")
+						.text(dateStr(album.date_last_upload, true))
+						.end()
+					.find(".location")
+						.text(album.location)
+						.end()
+					.find(".addImg")
+						.click(() => {
+							Modal.upload({
+								album: album,
+								canSelectAlbum: false
+							});
+						});
 
 				if (album.imgs.length) {
 					let $imgs = elm.find(".imgs"),
@@ -21,34 +41,123 @@ function getAlbum({
 					$imgs.empty();
 
 					for (let img of album.imgs) {
-						let $img;
+						let $img, colm;
 
 						$img = $(`
-							<div class="w3-col s12 m4 l3 w3-margin-bottom">
-								<div class="w3-card w3-padding w3-white w3-hover-shadow w3-pointer w3-animate-opacity">
-									<img src="img/upload/${img.id}.${img.type}" class="w3-img-contrast img" alt="image">
+							<div class="w3-col s12 m${col < 6 ? col + 1 : col} l${col} w3-margin-bottom">
+								<div class="w3-display-container w3-card w3-white w3-hover-shadow w3-pointer w3-animate-opacity">
+									<div class="w3-padding w3-overflow-hidden">
+										<img src="img/upload/${img.id}.${img.type}" class="w3-img-contrast w3-hover-zoom img" alt="image" style="width:100%;object-fit:cover">
+									</div>
+									<div class="w3-display-bottommiddle w3-display-hover w3-block w3-text-white w3-noevent" style="padding:64px 8px 12px;background:linear-gradient(#2220, #2227, #222a)">
+										<div class="w3-ellipsis name"></div>
+									</div>
+									<div class="w3-display-topright w3-dropdown-click w3-display-hover w3-border w3-white w3-noselect editBtn" style="margin:4px;padding:2px">
+										<img src="https://png.icons8.com/material/20/000000/pencil.png" class="w3-noevent">
+										<div class="w3-dropdown-content w3-bar-block w3-border w3-card" style="transform:translate(-80%)">
+											<div class="w3-bar-item w3-button editBtn renameImg">Đổi tên</div>
+											<div class="w3-bar-item w3-button editBtn copyImg">Sao chép</div>
+											<div class="w3-bar-item w3-button editBtn moveImg">Di chuyển</div>
+											<a class="w3-bar-item w3-button editBtn downloadImg">Tải xuống</a>
+											<div class="w3-bar-item w3-button editBtn deleteImg">Xóa</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						`);
 						$imgs.append($img);
 
+						fillName(img.name);
+
 						$img
 							.hide()
+							.children()
+							.click(function(event) {
+								if (!event.target.classList.contains("editBtn")) {
+									Modal.viewImg(img, album, len);
+								}
+							})
+							.hover(function() {
+
+							}, function() {
+								$img.find(".w3-dropdown-content").hide();
+							})
+							.end()
 							.find(".img")
 							.on("load", function() {
-								$img
-									.show()
-									.children()
-									.click(function() {
-										Modal.viewImg(img, album, len);
-									});
+								$img.show();
 
 								$(this).css({
-									width: "100%",
-									height: height || (height = $img.children().width()),
-									objectFit: "cover"
+									height: height || (height = $img.children().width() * 0.8)
 								});
+							})
+							.end()
+							.find(".w3-dropdown-click")
+							.click(function() {
+								$(this)
+									.find("> .w3-dropdown-content")
+									.toggle();
 							});
+
+						if (album.user_id === meId) {
+							$img
+								.find(".renameImg")
+									.click(() => {
+										Modal.renameImg(img, name => {
+											img.name = name;
+											fillName(name);
+										});
+									})
+									.end()
+								.find(".copyImg")
+									.click(() => {
+										Modal.copyImg(img, newImg => {
+											if (newImg) {
+												load(newImg.id);
+											}
+										});
+									})
+									.end()
+								.find(".moveImg")
+									.click(() => {
+										Modal.moveImg(img, err => {
+											if (err) {
+												Modal.alert(err);
+											}
+											else {
+												$img.remove();
+												album.imgs.splice(album.imgs.indexOf(img), 1);
+											}
+										});
+									})
+									.end()
+								.find(".downloadImg")
+									.prop({
+										href: `img/upload/${img.id}.${img.type}`,
+										download: `${img.id}.${img.type}`
+									})
+									.end()
+								.find(".deleteImg")
+									.click(() => {
+										Modal.deleteImg(img, () => {
+											$img.remove();
+											album.imgs.splice(album.imgs.indexOf(img), 1);
+										});
+									});
+						}
+						else {
+							$img
+								.find(".editBtn")
+									.remove();
+
+							elm
+								.find(".addImg")
+									.remove();
+						}
+
+						function fillName(name) {
+							$img.find(".name").text(name);
+						}
 					}
 				}
 				else {
@@ -67,17 +176,25 @@ function getAlbums({
 	dblclick = () => {},
 	mode = "view",
 	selectedId,
+	removeId,
 	pages = true,
-	rand
+	rand,
+	/*
+		user_id = 0: Tất cả user
+		user_id = -1: Tất cả user trừ tôi
+	*/
+	user_id = meId
 } = {}) {
 	elm = $(elm);
 
 	load(selectedId);
 
 	function load(selectedId) {
-		$.getJSON("php/getAlbums.php", {start, len, rand}, ([albums, num]) => {
+		$.getJSON("php/getAlbums.php", {start, len, rand, user_id}, ([albums, num]) => {
 			if (albums.length) {
 				let isSelected, height;
+
+				albums = albums.filter(v => v.id !== removeId);
 
 				elm.empty();
 
@@ -99,14 +216,15 @@ function getAlbums({
 									<div class="w3-ellipsis location" title="${text(album.location)}"></div>
 								</div>
 								<div class="w3-dropdown-click w3-display-topright w3-display-hover w3-border w3-white editBtn" style="margin:4px;padding:2px">
-									<img src="https://png.icons8.com/material/20/000000/pencil.png" class="w3-noevent" title="Chỉnh sửa hoặc xóa">
+									<img src="https://png.icons8.com/material/20/000000/pencil.png" class="w3-noevent">
 									<ul class="w3-dropdown-content w3-bar-block w3-border w3-card" style="transform:translate(-80%)">
-										<li class="w3-bar-item w3-button editBtn">Thêm ảnh</li>
+										<li class="w3-bar-item w3-button editBtn addImgAlbum">Thêm ảnh</li>
 										<li class="w3-bar-item w3-button editBtn renameAlbum">Đổi tên</li>
 										<li class="w3-bar-item w3-button editBtn editDateAlbum">Sửa ngày chụp</li>
 										<li class="w3-bar-item w3-button editBtn editLocationAlbum">Sửa địa điểm</li>
 										<li class="w3-bar-item w3-button editBtn deleteAlbum">Xóa</li>
 									</ul>
+								</div>
 							</div>
 						</div>
 					`);
@@ -194,36 +312,57 @@ function getAlbums({
 						})
 						.end()
 						.find(".w3-dropdown-click")
-						.click(function() {
+						.click(function(event) {
 							$(this)
 								.find(".w3-dropdown-content")
 								.toggle();
 						});
 
-					$album
-						.find(".renameAlbum")
-						.click(() => {
-							Modal.renameAlbum(album, name => {
-								album.name = name;
-								fillName(name);
-							});
-						})
-						.end()
-						.find(".editDateAlbum")
-						.click(() => {
-							Modal.editDateAlbum(album, date => {
-								album.date = date;
-								fillDate(date);
-							});
-						})
-						.end()
-						.find(".editLocationAlbum")
-						.click(() => {
-							Modal.editLocationAlbum(album, location => {
-								album.location = location;
-								fillLocation(location);
-							});
-						});
+					if (album.user_id === meId) {
+						$album
+							.find(".addImgAlbum")
+								.click(event => {
+									Modal.upload({
+										album,
+										canSelectAlbum: false
+									});
+								})
+								.end()
+							.find(".renameAlbum")
+								.click(event => {
+									Modal.renameAlbum(album, name => {
+										album.name = name;
+										fillName(name);
+									});
+								})
+								.end()
+							.find(".editDateAlbum")
+								.click(event => {
+									Modal.editDateAlbum(album, date => {
+										album.date = date;
+										fillDate(date);
+									});
+								})
+								.end()
+							.find(".editLocationAlbum")
+								.click(event => {
+									Modal.editLocationAlbum(album, location => {
+										album.location = location;
+										fillLocation(location);
+									});
+								})
+								.end()
+							.find(".deleteAlbum")
+								.click(event => {
+									Modal.deleteAlbum(album, () => {
+										$album.remove();
+										albums.splice(albums.indexOf(album), 1);
+									});
+								});
+					}
+					else {
+						$album.find(".editBtn").remove();
+					}
 
 					if (selectedId == album.id) {
 						isSelected = true;
@@ -314,7 +453,7 @@ function getAlbums({
 			}
 			else {
 				let $content = $(`
-					<p class="w3-text-gray">
+					<p class="w3-padding-small w3-text-gray">
 						Chưa có album ảnh nào, hãy <a href="javascript:" class="createAlbum">tạo một album mới</a>!
 					</p>
 				`);
@@ -361,7 +500,7 @@ function modal(title = "", css = "auto", html = "", js) {
 
 	$modal = `
 		<div class="w3-modal __modal ${clsRand}">
-			<div class="w3-modal-content w3-card w3-light-gray anim-show-modal __modalContent" style="border-radius:16px;overflow:hidden">
+			<div class="w3-modal-content w3-card w3-margin-bottom anim-show-modal __modalContent" style="border-radius:16px;overflow:hidden">
 				<header class="w3-container w3-red w3-card __modalHeader" style="position:relative">
 					<span class="w3-button w3-transparent w3-text-white w3-display-topright w3-hover- __close">&#x2716;</span>
 					<h6 class="${title ? "" : "w3-hide"} __modalTitle">${title}</h6>
@@ -450,14 +589,25 @@ function active(elm, lv, hasClass, addClass, removeClass) {
 	}
 }
 
-function dateStr(date) {
+function dateStr(date, isDatetime) {
 	let now, str = "";
 
-	date = new Date(new Date(date).toDateString());
-	now = new Date(new Date().toDateString());
+	date = new Date(new Date(date)[isDatetime ? "toString" : "toDateString"]());
+	now = new Date(new Date()[isDatetime ? "toString" : "toDateString"]());
 
 	if (isFinite(+date)) {
-		str = date.toLocaleDateString();
+		let d = (date.getDate() + "").padStart(2, 0),
+			m = (date.getMonth() + 1 + "").padStart(2, 0),
+			Y = date.getFullYear(),
+			H = (date.getHours() + "").padStart(2, 0),
+			i = (date.getMinutes() + "").padStart(2, 0);
+
+		if (isDatetime) {
+			str = `${d}/${m}/${Y} ${H}:${i}`;
+		}
+		else {
+			str = `${d}/${m}/${Y}`;
+		}
 
 		if (date + "" === now + "") {
 			str = "Hôm nay";

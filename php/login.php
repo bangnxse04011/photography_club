@@ -29,6 +29,9 @@ if (!$meId) {
 				die('Tên tài khoản không tồn tại.');
 			}
 		}
+		else {
+			die('Đã xảy ra lỗi, hãy thử lại.');
+		}
 
 		$stm->close();
 	}

@@ -1,11 +1,21 @@
-loadHomeMyAlbum();
+loadHome();
 
-function loadHomeMyAlbum() {
+function loadHome() {
 	getAlbums({
 		start: 0,
 		len: 8,
-		elm: homeMyAlbum,
+		elm: $(".homeSuggestAlbum"),
 		pages: false,
-		rand: true
+		rand: true,
+		user_id: -1
 	});
+
+	if (meId) {
+		getAlbums({
+			start: 0,
+			len: 8,
+			elm: $(".homeMyAlbum"),
+			pages: false
+		});
+	}
 }

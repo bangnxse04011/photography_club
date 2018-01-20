@@ -25,11 +25,11 @@ if ($id > 0 && $start >= 0 && $len > 0) {
 		if ($rs = $stm->get_result()) {
 			$album['num_img'] = $rs->fetch_row()[0];
 
-			$stm = $con->prepare(
-				"SELECT * FROM imgs
+			$stm = $con->prepare("
+				SELECT * FROM imgs
 				WHERE album_id=? AND status=1
-				LIMIT ?, ?"
-			);
+				LIMIT ?, ?
+			");
 			$stm->bind_param('iii', $id, $start, $len);
 			$stm->execute();
 

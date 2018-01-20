@@ -2,6 +2,10 @@ body {
 	height: 0;
 	font-family: 'Noto Sans', sans-serif;
 }
+hr {
+	border-top: solid 1px #ccc;
+	border-bottom: solid 1px #fff;
+}
 
 ::-webkit-scrollbar {
 	width: 10px;
@@ -99,6 +103,18 @@ body {
 .w3-switch:checked:before {
 	background: #2196f3;
 }
+.w3-overflow-hidden {
+	overflow: hidden!important;
+}
+.w3-hover-zoom {
+	transition: transform .1s;
+}
+.w3-hover-zoom:hover {
+	transform: scale(1.25);
+}
+.w3-underline-none {
+	text-decoration: none;
+}
 img.w3-img-empty:not([src]) {
 	display: none;
 }
@@ -118,7 +134,7 @@ img.w3-img-empty:not([src]) {
 		transform: scale(0.8);
 	}
 	50% {
-		transform: scale(1.1);
+		transform: scale(1.05);
 	}
 	100% {
 		opacity: 1;

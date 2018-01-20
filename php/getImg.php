@@ -7,6 +7,7 @@ $album_id = $_GET['album_id'];
 $prev = null;
 $img = null;
 $next = null;
+$index = -1;
 
 if ($id > 0) {
 	$stm = $con->prepare("SELECT * FROM imgs WHERE album_id=?");
@@ -15,6 +16,8 @@ if ($id > 0) {
 
 	if ($rs = $stm->get_result()) {
 		while ($img = $rs->fetch_assoc()) {
+			$index++;
+
 			if ($img['id'] == $id) {
 				$next = $rs->fetch_assoc();
 
@@ -25,7 +28,7 @@ if ($id > 0) {
 		}
 	}
 
-	echo json_encode([$prev, $img, $next]);
+	echo json_encode([$prev, $img, $next, $index]);
 }
 
 $con->close();

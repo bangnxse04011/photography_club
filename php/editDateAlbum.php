@@ -13,7 +13,7 @@ if (
 	$stm->bind_param('sii', $date, $album_id, $meId);
 
 	if (!$stm->execute()) {
-		die('Sửa ngày chụp album không thành công.');
+		die('Sửa ngày chụp album thất bại.');
 	}
 }
 

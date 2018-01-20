@@ -13,7 +13,7 @@ if (
 	$stm->bind_param('sii', $location, $album_id, $meId);
 
 	if (!$stm->execute()) {
-		die('Sửa địa điểm album không thành công.');
+		die('Sửa địa điểm album thất bại.');
 	}
 }
 

@@ -29,17 +29,21 @@ if (!$meId) {
 
 				$con->begin_transaction();
 
-				$stm = $con->prepare(
-					"INSERT INTO users (name, pass, first_name, last_name, email, date_created, status)
-					VALUES (?, ?, ?, ?, ?, ?, 1)"
+				$stm = $con->prepare("
+					INSERT INTO users (name, pass, first_name, last_name,
+						email, date_created, status)
+					VALUES (?, ?, ?, ?, ?, ?, 1)
+				");
+				$stm->bind_param(
+					'ssssss',
+					$name, $pass, $first_name, $last_name, $email, $date_created
 				);
-				$stm->bind_param('ssssss', $name, $pass, $first_name, $last_name, $email, $date_created);
 
 				if ($stm->execute()) {
-					$stm = $con->prepare(
-						"INSERT INTO users_setting ()
-						VALUES ()"
-					);
+					$stm = $con->prepare("
+						INSERT INTO users_setting ()
+						VALUES ()
+					");
 
 					if ($stm->execute()) {
 						$_SESSION['id'] = $con->insert_id;
@@ -48,12 +52,19 @@ if (!$meId) {
 					}
 					else {
 						$con->rollback();
+
+						die('Đã xảy ra lỗi, hãy thử lại.');
 					}
 				}
 				else {
 					$con->rollback();
+
+					die('Đã xảy ra lỗi, hãy thử lại.');
 				}
 			}
+		}
+		else {
+			die('Đã xảy ra lỗi, hãy thử lại.');
 		}
 
 		$stm->close();

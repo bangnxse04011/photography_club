@@ -1,12 +1,62 @@
 let Modal = {
-	alert(msg = "", okFn) {
+	alert(msg = "", callback) {
 		return modal("Thông báo", 300, `
 			<div class="w3-padding w3-center">
-				<p class="w3-left-align">${text(msg)}</p>
-				<button class="w3-button __close">OK</button>
+				<p class="w3-left-align">${text(msg).replace(/\n/g, "<br>")}</p>
+				<button class="w3-button w3-light-gray __close">OK</button>
 			</div>
 		`, $0 => {
-			$0.close.click(okFn);
+			$0.close.click(callback);
+		});
+	},
+
+	confirm(msg = "", okFn, cancelFn) {
+		return modal("Xác nhận", 300, `
+			<div class="w3-padding w3-center">
+				<p class="w3-left-align">${text(msg).replace(/\n/g, "<br>")}</p>
+				<button class="w3-button w3-light-gray __close __ok">OK</button>&nbsp;
+				<button class="w3-button w3-light-gray __close">Hủy</button>
+			</div>
+		`, $0 => {
+			$0.ok.click(okFn);
+			$0.close.click(cancelFn);
+		});
+	},
+
+	wait(name = "Xin chờ...", fn = () => {}) {
+		return modal("", {
+			position: "fixed",
+			left: 0,
+			top: 0,
+			width: "100%",
+			height: "100%"
+		}, `
+			<div class="w3-display-container w3-noselect" style="position:fixed;width:100%;height:100%">
+				<div class="w3-display-middle w3-center">
+					<h3 class="w3-text-outline"><b>${text(name)}</b></h3><br>
+					<div class="w3-spin __loader"></div>
+				</div>
+			</div>
+		`, $0 => {
+			$0.modalContent
+				.removeClass("w3-light-gray")
+				.css({
+					borderRadius: 0,
+					background: "#0004"
+				});
+
+			$0.modalHeader.hide();
+
+			$0.loader.css({
+				width: 72,
+				height: 72,
+				border: "solid 8px #ccc",
+				borderTopColor: "#03a9f4",
+				borderRadius: "50%",
+				display: "inline-block"
+			});
+
+			fn($0);
 		});
 	},
 
@@ -27,14 +77,15 @@ let Modal = {
 				</p>
 				<form class="__form" action="php/register.php" method="post">
 					<div class="w3-row">
-						<span class="w3-col m6">
+						<div class="w3-col m6 w3-padding-top">
 							<label>Họ</label>
 							<input type="text" name="first_name" class="w3-input w3-border w3-round" autofocus required>
-						</span>
-						<span class="w3-col m6" style="padding-left:16px">
+						</div>
+						<div class="w3-col m1 w3-hide-small">&nbsp;</div>
+						<div class="w3-col m5 w3-padding-top">
 							<label>Tên</label>
 							<input type="text" name="last_name" class="w3-input w3-border w3-round" required>
-						</span>
+						</div>
 					</div>
 					<div class="w3-padding-top">
 						<label>Tên tài khoản</label>
@@ -53,7 +104,7 @@ let Modal = {
 						<input type="email" name="email" class="w3-input w3-border w3-round __email" maxlength="100" placeholder="không bắt buộc, dùng để lấy lại mật khẩu">
 					</div>
 					<div class="w3-margin w3-center">
-						<input type="submit" class="w3-button" value="Đăng ký">
+						<input type="submit" class="w3-button w3-light-gray" value="Đăng ký">
 					</div>
 				</form>
 			</div>
@@ -94,7 +145,7 @@ let Modal = {
 	},
 
 	login() {
-		return modal("Đăng nhập", 400, `
+		return modal("Đăng nhập", 320, `
 			<form class="w3-container __form" action="php/login.php" method="post">
 				<p>
 					<label>Tên tài khoản</label>
@@ -105,7 +156,7 @@ let Modal = {
 					<input type="password" name="pass" class="w3-input w3-border w3-round" minlength="6" maxlength="50" required>
 				</p>
 				<p class="w3-center">
-					<input type="submit" class="w3-button" value="Đăng nhập">
+					<input type="submit" class="w3-button w3-light-gray" value="Đăng nhập">
 				</p>
 			</form>
 		`, $0 => {
@@ -124,12 +175,15 @@ let Modal = {
 		});
 	},
 
-	upload({album_id = "", album_name = ""} = {}) {
+	upload({
+		album,
+		canSelectAlbum = true
+	} = {}) {
 		return modal("Upload ảnh", 900, `
 			<div class="w3-row">
 				<div class="w3-col m1">&nbsp;</div>
 				<form action="?view=upload" method="post" class="w3-col m10 w3-padding __form" enctype="multipart/form-data">
-					<h2>Tải lên ảnh của bạn</h2>
+					<h2 class="w3-padding-top w3-ellipsis __title"></h2>
 					<div class="w3-cell-row">
 						<div class="w3-cell w3-padding-right">
 							<h6>Tải lên các tập tin hình ảnh</h6>
@@ -152,13 +206,12 @@ let Modal = {
 					</div>
 					<br>
 					<div class="w3-row">
-						<input type="text" class="w3-col m7 l8 w3-input w3-border-0 __album_name">
-						<div class="w3-col m5 l4 w3-button __selectAlbum">Chọn album ảnh</div>
+						<input type="text" class="w3-col m7 l8 w3-input w3-border w3-border-light-gray __album_name">
+						<input type="button" class="w3-col m5 l4 w3-button w3-border w3-border-light-gray w3-light-gray __selectAlbum" value="Chọn album ảnh">
 						<input type="hidden" name="album_id">
 					</div>
-					<p>
-						<br>
-						<input type="submit" class="w3-button" value="Tải lên">
+					<p class="w3-margin-top w3-padding-top">
+						<input type="submit" class="w3-button w3-light-gray" value="Tải lên">
 					</p>
 				</form>
 				<div class="w3-col m1">&nbsp;</div>
@@ -166,31 +219,52 @@ let Modal = {
 		`, $0 => {
 			let form = $0.form[0];
 
-			$0.album_name.val(album_name);
-			form.album_id.value = album_id;
+			if (album) {
+				$0.title.text(`Tải lên ảnh vào album: ${album.name}`);
+				$0.album_name.val(album.name);
+				form.album_id.value = album.id;
+			}
+			else {
+				$0.title.text("Tải lên ảnh của bạn");
+			}
 
-			$0.files.change(function() {
-				this.required = true;
-				$0.filezip.prop({
-					required: false,
-					value: ""
+			$0.files
+				.click(function() {
+					this.value = "";
+				})
+				.change(function() {
+					this.required = true;
+					$0.filezip.prop({
+						required: false,
+						value: ""
+					});
 				});
-			});
 
-			$0.filezip.change(function() {
-				this.required = true;
-				$0.files.prop({
-					required: false,
-					value: ""
+			$0.filezip
+				.click(function() {
+					this.value = "";
+				})
+				.change(function() {
+					this.required = true;
+					$0.files.prop({
+						required: false,
+						value: ""
+					});
 				});
-			});
 
-			$0.selectAlbum.click(event => {
-				Modal.selectAlbum(undefined, album => {
-					form.album_id.value = album.id;
-					$0.album_name.val(album.name);
+			if (canSelectAlbum) {
+				$0.selectAlbum.click(event => {
+					Modal.selectAlbum({}, album => {
+						form.album_id.value = album.id;
+						$0.album_name.val(album.name);
+					});
 				});
-			});
+			}
+			else {
+				$0.selectAlbum
+					.prop("disabled", true)
+					.addClass("w3-disabled");
+			}
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -207,14 +281,17 @@ let Modal = {
 		});
 	},
 
-	selectAlbum(selectedId, callback) {
+	selectAlbum({
+		selectedId,
+		removeId
+	} = {}, callback) {
 		return modal("Chọn một album ảnh", 850, `
 			<div class="w3-padding">
 				<div class="w3-row-padding __list" style="padding-bottom:8px;overflow:overlay"></div>
 				<div class="w3-border-top" style="padding-top:8px">
-					<button class="w3-button w3-disabled __ok" disabled>OK</button>
-					<button class="w3-button __close">Hủy</button>
-					<button class="w3-button w3-right __create">Tạo album mới</button>
+					<button class="w3-button w3-light-gray w3-disabled __ok" disabled>OK</button>
+					<button class="w3-button w3-light-gray __close">Hủy</button>
+					<button class="w3-button w3-light-gray w3-right __create">Tạo album mới</button>
 				</div>
 			</div>
 		`, $0 => {
@@ -234,13 +311,14 @@ let Modal = {
 					},
 					dblclick: okFn,
 					mode: "select",
-					selectedId
-				})
+					selectedId,
+					removeId
+				});
 			}
 
 			$0.list.css({
 				maxHeight: window.innerHeight - 300
-			})
+			});
 
 			$0.ok.click(okFn);
 
@@ -251,9 +329,9 @@ let Modal = {
 			});
 
 			function okFn() {
-				callback && callback(selected);
-
-				$0.fn.close();
+				if (!callback || callback && callback(selected) !== false) {
+					$0.fn.close();
+				}
 			}
 		});
 	},
@@ -277,7 +355,7 @@ let Modal = {
 					<input type="text" name="location" class="w3-input w3-border w3-round __location">
 				</div>
 				<div class="w3-center w3-margin-top">
-					<input type="submit" class="w3-button" value="OK">
+					<input type="submit" class="w3-button w3-light-gray" value="OK">
 				</div>
 			</form>
 		`, $0 => {
@@ -345,8 +423,8 @@ let Modal = {
 					<label>Nhập tên mới: </label>
 					<input type="text" name="name" class="w3-input w3-border __name" value="${text(album.name)}" minlength="1" maxlength="200" data-err-blank="Tên album phải chứa ít nhất một ký tự không phải khoảng trắng." autofocus required>
 				</div>
-				<input type="submit" value="OK" class="w3-button">
-				<div class="w3-button __close">Hủy</div>
+				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<div class="w3-button w3-light-gray __close">Hủy</div>
 			</form>
 		`, $0 => {
 			$0.name
@@ -401,8 +479,8 @@ let Modal = {
 					<label>Chọn ngày: </label>
 					<input type="date" name="date" class="w3-input w3-border __date" value="${album.date}" data-err-future="Ngày chụp không thể là một ngày trong tương lai." autofocus>
 				</div>
-				<input type="submit" value="OK" class="w3-button">
-				<div class="w3-button __close">Hủy</div>
+				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<div class="w3-button w3-light-gray __close">Hủy</div>
 			</form>
 		`, $0 => {
 			$0.date
@@ -454,8 +532,8 @@ let Modal = {
 					<label>Nhập địa điểm: </label>
 					<input type="text" name="location" class="w3-input w3-border __location" value="${text(album.location)}" autofocus>
 				</div>
-				<input type="submit" value="OK" class="w3-button">
-				<div class="w3-button __close">Hủy</div>
+				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<div class="w3-button w3-light-gray __close">Hủy</div>
 			</form>
 		`, $0 => {
 			$0.location.select();
@@ -480,6 +558,136 @@ let Modal = {
 		});
 	},
 
+	deleteAlbum(album, callback) {
+		Modal.confirm(`Bạn chắc chắn muốn xóa album "${text(album.name)}"? Tất cả ảnh trong album cũng sẽ bị xóa.`, () => {
+			Modal.wait(undefined, $1 => {
+				$.post("php/deleteAlbum.php", {
+					id: album.id
+				}, err => {
+					if (err) {
+						Modal.alert(err);
+					}
+					else {
+						callback(album);
+					}
+
+					$1.fn.close();
+				});
+			});
+		});
+	},
+
+	renameImg(img, callback) {
+		return modal("Đổi tên hình ảnh", 320, `
+			<form class="w3-padding __form">
+				<div class="w3-section w3-row">
+					<label class="w3-col s12">Nhập tên mới: </label>
+					<input type="text" name="name" class="w3-col s10 w3-input w3-border __name" value="${text(img.name)}" minlength="1" maxlength="500" pattern="^[^\\\\/:*?&quot;&lt;&gt;|]+$" data-err-blank="Tên hình ảnh phải chứa ít nhất một ký tự không phải khoảng trắng." autofocus required>
+					<span class="w3-col s2 w3-padding">.${img.type}</span>
+				</div>
+				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<div class="w3-button w3-light-gray __close">Hủy</div>
+			</form>
+		`, $0 => {
+			$0.name
+				.on("input", function() {
+					this.setCustomValidity("");
+
+					if (!this.value.trim()) {
+						this.title = this.dataset.errBlank;
+					}
+					else {
+						this.title = "";
+					}
+				})
+				.select();
+
+			$0.form.submit(function(event) {
+				event.preventDefault();
+
+				this.name.value = this.name.value.trim();
+
+				if (!this.name.value) {
+					this.name.title = this.name.dataset.errBlank;
+					this.name.setCustomValidity(this.name.title);
+					this.name.reportValidity();
+				}
+				else if (this.name.value !== img.name) {
+					$.post("php/renameImg.php", {
+						name: this.name.value,
+						id: img.id
+					}, err => {
+						if (err) {
+							Modal.alert(err);
+						}
+						else {
+							callback(this.name.value);
+
+							$0.fn.close();
+						}
+					});
+				}
+				else {
+					$0.fn.close();
+				}
+			});
+		});
+	},
+
+	copyImg(img, callback) {
+		Modal.selectAlbum({}, album => {
+			$.post("php/copyImg.php", {
+				id: img.id,
+				album_id: album.id,
+				is_same_album: +(img.album_id === album.id)
+			},
+			res => {
+				if (res) {
+					let [err, newImg] = JSON.parse(res);
+
+					if (err) {
+						Modal.alert(err);
+					}
+
+					callback && callback(newImg);
+				}
+			});
+		});
+	},
+
+	moveImg(img, callback) {
+		Modal.selectAlbum({
+			removeId: img.album_id
+		}, album => {
+			$.post("php/moveImg.php", {
+				id: img.id,
+				album_id: album.id
+			},
+			res => {
+				callback(res);
+			});
+		});
+	},
+
+	deleteImg(img, callback) {
+		Modal.confirm("Bạn chắc chắn muốn xóa?", () => {
+			Modal.wait(undefined, $1 => {
+				$.post("php/deleteImg.php", {
+					id: img.id
+				}, err => {
+					if (err) {
+						Modal.alert(err);
+					}
+					else {
+						callback(img);
+					}
+
+					$1.fn.close();
+				});
+			});
+		});
+	},
+
 	viewImg(img, album, len) {
 		return modal("", {
 			position: "fixed",
@@ -488,23 +696,31 @@ let Modal = {
 			width: "100%",
 			height: "100%"
 		}, `
-			<div class="w3-display-container w3-black" style="position:fixed;width:100%;height:100%">
+			<div class="w3-display-container w3-text-white __view" style="position:fixed;width:100%;height:100%;background:#0e0e0e">
 				<img class="w3-display-topleft __img __img2" alt="image">
 				<img class="w3-display-topleft __img __img1" alt="image" style="display:none">
-				<button class="w3-display-left w3-button w3-transparent w3-hover-dark-gray __prev" style="padding:32px 16px">
-					<img src="https://png.icons8.com/material/48/ffffff/back.png" class="w3-noevent">
-				</button>
-				<button class="w3-display-right w3-button w3-transparent w3-hover-dark-gray __next" style="padding:32px 16px">
-					<img src="https://png.icons8.com/material/48/ffffff/forward.png" class="w3-noevent">
-				</button>
-				<div class="w3-display-topmiddle w3-bar" style="background:#0008">
-					<div class="w3-col s8">
-						<span class="w3-padding w3-xlarge __name"></span>
-					</div>
-					<div class="w3-col s4">
-						<button class="w3-bar-item w3-button w3-right w3-hover-red __close">
-							<img src="https://png.icons8.com/material/24/ffffff/delete-sign.png" class="w3-noevent">
-						</button>
+				<div class="__tools">
+					<button class="w3-display-left w3-button w3-transparent w3-hover-dark-gray __prev" style="padding:32px 16px">
+						<img src="https://png.icons8.com/material/48/ffffff/back.png" class="w3-noevent">
+					</button>
+					<button class="w3-display-right w3-button w3-transparent w3-hover-dark-gray __next" style="padding:32px 16px">
+						<img src="https://png.icons8.com/material/48/ffffff/forward.png" class="w3-noevent">
+					</button>
+					<div class="w3-display-topleft w3-row w3-bar w3-large" style="background:#0008">
+						<div class="w3-col s5">
+							<span class="w3-padding w3-ellipsis __name"></span>
+						</div>
+						<div class="w3-col s2 w3-center">
+							<span class="w3-padding w3-ellipsis __imgIndex"></span>
+						</div>
+						<div class="w3-col s5">
+							<div class="w3-right">
+								<a class="__download">
+									<img class="w3-bar-item w3-button w3-hover-dark-gray" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
+								</a>
+								<img class="w3-bar-item w3-button w3-hover-red __close" src="https://png.icons8.com/material/24/ffffff/delete-sign.png" title="Đóng">
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -522,6 +738,62 @@ let Modal = {
 					objectFit: "scale-down"
 				});
 
+			$0.view
+				.mousemove(function(event) {
+					if (
+						event.target === $0.view[0] || event.target === $0.img[1]
+					) {
+						if ($0.tools.css("display") === "none") {
+							if (
+								Math.max(
+									Math.abs(event.originalEvent.movementX),
+									Math.abs(event.originalEvent.movementY)
+								) > 5
+							) {
+								$0.tools
+									.finish()
+									.show()
+									.delay(1000)
+									.fadeOut(200);
+							}
+						}
+						else {
+							if (
+								Math.max(
+									Math.abs(event.originalEvent.movementX),
+									Math.abs(event.originalEvent.movementY)
+								) > 5
+							) {
+								$0.tools
+									.finish()
+									.show()
+									.delay(1000)
+									.fadeOut(200);
+							}
+							else {
+								if ($0.tools.data("hoverTools")) {
+									$0.tools
+										.finish()
+										.show()
+										.delay(1000)
+										.fadeOut(200)
+										.removeData("hoverTools");
+								}
+							}
+						}
+					}
+					else {
+						$0.tools
+							.finish()
+							.show()
+							.data("hoverTools", true);
+					}
+				});
+
+			$0.tools
+				.delay(1000)
+				.fadeOut(200);
+
 			load(img);
 
 			function load(img, nav) {
@@ -532,7 +804,7 @@ let Modal = {
 				next = album.imgs[findIndex + 1];
 
 				if (album.num_img < len || (next && prev)) {
-					render(nav, prev, img, next);
+					render(nav, prev, img, next, findIndex);
 				}
 				else {
 					$.getJSON("php/getImg.php", {
@@ -546,7 +818,22 @@ let Modal = {
 				}
 			}
 
-			function render(nav, prev, img, next) {
+			function render(nav, prev, img, next, index) {
+				let imgUrl;
+
+				imgUrl = `img/upload/${img.id}.${img.type}`;
+
+				$0.name
+					.text(img.name)
+					.prop("title", img.name);
+
+				$0.imgIndex.text((index + 1) + " / " + album.num_img);
+
+				$0.download.prop({
+					href: imgUrl,
+					download: `${img.id}.${img.type}`
+				});
+
 				$0.prev
 					.add($0.next)
 					.off("click")
@@ -554,7 +841,7 @@ let Modal = {
 					.addClass("w3-disabled");
 
 				$0.img2
-					.prop("src", `img/upload/${img.id}.${img.type}`)
+					.prop("src", imgUrl)
 					.finish()
 					.velocity({
 						left: [0, nav * 100 + "%"]
@@ -571,11 +858,9 @@ let Modal = {
 					}, 400, e => {
 						$(e)
 							.show()
-							.prop("src", `img/upload/${img.id}.${img.type}`)
+							.prop("src", imgUrl)
 							.css("left", 0);
 					});
-
-				$0.name.text(img.name + "." + img.type);
 
 				if (prev) {
 					$0.prev

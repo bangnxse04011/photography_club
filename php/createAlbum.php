@@ -22,19 +22,25 @@ if (
 		else {
 			$now = date('Y-m-d H:i:s');
 
-			$stm = $con->prepare(
-				"INSERT INTO albums (name, date, location, date_created, date_last_upload, user_id, status)
-				VALUES (?, ?, ?, ?, ?, ?, 1)"
-			);
+			$stm = $con->prepare("
+				INSERT INTO albums (name, date, location, date_created,
+					date_last_upload, user_id, status)
+				VALUES (?, ?, ?, ?, ?, ?, 1)
+			");
 			$stm->bind_param('sssssi', $name, $date, $location, $now, $now, $meId);
 
-			if (!$stm->execute()) {
-				die('Thêm album thất bại.');
+			if ($stm->execute()) {
+				$insert_id = $con->insert_id;
+
+				echo $insert_id;
 			}
 			else {
-				echo $con->insert_id;
+				die('Thêm album thất bại.');
 			}
 		}
+	}
+	else {
+		die('Đã xảy ra lỗi, hãy thử lại.');
 	}
 }
 
