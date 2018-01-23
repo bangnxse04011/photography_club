@@ -8,7 +8,13 @@ $len = isset($_GET['len']) ? +$_GET['len'] : 20;
 $album = null;
 
 if ($id > 0 && $start >= 0 && $len > 0) {
-	$stm = $con->prepare("SELECT * FROM albums WHERE id=? AND status=1");
+	$stm = $con->prepare("
+		SELECT albums.*, users.name user_name
+		FROM albums
+		JOIN users
+		ON albums.user_id=users.id
+		WHERE albums.id=? AND albums.status=1
+	");
 	$stm->bind_param('i', $id);
 	$stm->execute();
 

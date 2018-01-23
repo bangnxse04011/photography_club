@@ -61,13 +61,27 @@
 													$stm->bind_param('si', $date_last_upload, $album_id);
 
 													if ($stm->execute()) {
-														if (move_uploaded_file(
-															$files['tmp_name'][$i],
-															"$upload_dir/$insert_id.$type"
-														)) {
-															$isSuccess = TRUE;
+														$act = 'upload';
+														$date = date('Y-m-d H:i:s');
 
-															$con->commit();
+														$stm = $con->prepare("
+															INSERT INTO histories (user_id, act, album_id, img_id, date)
+															VALUES (?, ?, ?, ?, ?)
+														");
+														$stm->bind_param('isiis', $meId, $act, $album_id, $insert_id, $date);
+
+														if ($stm->execute()) {
+															if (move_uploaded_file(
+																$files['tmp_name'][$i],
+																"$upload_dir/$insert_id.$type"
+															)) {
+																$isSuccess = TRUE;
+
+																$con->commit();
+															}
+															else {
+																$con->rollback();
+															}
 														}
 														else {
 															$con->rollback();
@@ -143,10 +157,24 @@
 															$stm->bind_param('si', $date_last_upload, $album_id);
 
 															if ($stm->execute()) {
-																if (file_put_contents("$upload_dir/$insert_id.$type", $content)) {
-																	$isSuccess = TRUE;
+																$act = 'upload';
+																$date = date('Y-m-d H:i:s');
 
-																	$con->commit();
+																$stm = $con->prepare("
+																	INSERT INTO histories (user_id, act, album_id, img_id, date)
+																	VALUES (?, ?, ?, ?, ?)
+																");
+																$stm->bind_param('isiis', $meId, $act, $album_id, $insert_id, $date);
+
+																if ($stm->execute()) {
+																	if (file_put_contents("$upload_dir/$insert_id.$type", $content)) {
+																		$isSuccess = TRUE;
+
+																		$con->commit();
+																	}
+																	else {
+																		$con->rollback();
+																	}
 																}
 																else {
 																	$con->rollback();

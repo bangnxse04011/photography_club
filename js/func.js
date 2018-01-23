@@ -8,10 +8,8 @@ function getAlbum({
 } = {}) {
 	elm = $(elm);
 
-	load(imgId);
-
 	function load(imgId) {
-		$.getJSON("php/getAlbum.php", {id, start, len}, album => {
+		return $.getJSON("php/getAlbum.php", {id, start, len}, album => {
 			if (album) {
 				elm
 					.find(".name")
@@ -35,8 +33,7 @@ function getAlbum({
 						});
 
 				if (album.imgs.length) {
-					let $imgs = elm.find(".imgs"),
-						height;
+					let $imgs = elm.find(".imgs"), height;
 
 					$imgs.empty();
 
@@ -67,37 +64,38 @@ function getAlbum({
 						`);
 						$imgs.append($img);
 
-						fillName(img.name);
-
 						$img
 							.hide()
 							.children()
-							.click(function(event) {
-								if (!event.target.classList.contains("editBtn")) {
-									Modal.viewImg(img, album, len);
-								}
-							})
-							.hover(function() {
+								.click(function(event) {
+									if (!event.target.classList.contains("editBtn")) {
+										Modal.viewImg(img, album, len);
+									}
+								})
+								.hover(function() {
 
-							}, function() {
-								$img.find(".w3-dropdown-content").hide();
-							})
-							.end()
-							.find(".img")
-							.on("load", function() {
-								$img.show();
-
-								$(this).css({
-									height: height || (height = $img.children().width() * 0.8)
-								});
-							})
-							.end()
+								}, function() {
+									$img.find(".w3-dropdown-content").hide();
+								})
+								.end()
 							.find(".w3-dropdown-click")
-							.click(function() {
-								$(this)
-									.find("> .w3-dropdown-content")
-									.toggle();
-							});
+								.click(function() {
+									$(this)
+										.find("> .w3-dropdown-content")
+										.toggle();
+								})
+								.end()
+							.find(".img")
+								.on("load", function() {
+									$img.show();
+
+									$(this).css({
+										height: height || (height = $img.children().width() * 0.8)
+									});
+								})
+								.end()
+							.find(".name")
+								.text(img.name);
 
 						if (album.user_id === meId) {
 							$img
@@ -105,7 +103,7 @@ function getAlbum({
 									.click(() => {
 										Modal.renameImg(img, name => {
 											img.name = name;
-											fillName(name);
+											$img.find(".name").text(name);
 										});
 									})
 									.end()
@@ -146,17 +144,8 @@ function getAlbum({
 									});
 						}
 						else {
-							$img
-								.find(".editBtn")
-									.remove();
-
-							elm
-								.find(".addImg")
-									.remove();
-						}
-
-						function fillName(name) {
-							$img.find(".name").text(name);
+							$img.find(".editBtn").remove();
+							elm.find(".addImg").remove();
 						}
 					}
 				}
@@ -164,8 +153,10 @@ function getAlbum({
 
 				}
 			}
-		})
+		});
 	}
+
+	return load(imgId);
 }
 
 function getAlbums({
@@ -177,6 +168,7 @@ function getAlbums({
 	mode = "view",
 	selectedId,
 	removeId,
+	removeEditBtn,
 	pages = true,
 	rand,
 	/*
@@ -187,10 +179,8 @@ function getAlbums({
 } = {}) {
 	elm = $(elm);
 
-	load(selectedId);
-
 	function load(selectedId) {
-		$.getJSON("php/getAlbums.php", {start, len, rand, user_id}, ([albums, num]) => {
+		return $.getJSON("php/getAlbums.php", {start, len, rand, user_id}, ([albums, num]) => {
 			if (albums.length) {
 				let isSelected, height;
 
@@ -359,6 +349,18 @@ function getAlbums({
 										albums.splice(albums.indexOf(album), 1);
 									});
 								});
+
+						[
+							"addImgAlbum",
+							"renameAlbum",
+							"editDateAlbum",
+							"editLocationAlbum",
+							"deleteAlbum"
+						].map(v => {
+							if (removeEditBtn.includes(v)) {
+								$album.find("." + v).remove();
+							}
+						});
 					}
 					else {
 						$album.find(".editBtn").remove();
@@ -470,6 +472,8 @@ function getAlbums({
 			}
 		});
 	}
+
+	return load(selectedId);
 }
 
 function text(html) {

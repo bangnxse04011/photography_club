@@ -154,6 +154,10 @@ img.w3-img-empty:not([src]) {
 #btnSearch {
 	border-radius: 0 4px 4px 0;
 }
+#searchSuggest {
+	position: fixed;
+	max-height: 80%;
+}
 .userIcon {
 	width: 40px;
 	height: 40px;
@@ -194,6 +198,6 @@ img.w3-img-empty:not([src]) {
 .separator> * {
 	position: relative;
 	padding: 0 12px;
-	background: #f1f1f1;
+	background: #fff;
 	color: #888;
 }

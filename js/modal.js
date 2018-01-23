@@ -254,7 +254,9 @@ let Modal = {
 
 			if (canSelectAlbum) {
 				$0.selectAlbum.click(event => {
-					Modal.selectAlbum({}, album => {
+					Modal.selectAlbum({
+						removeEditBtn: "addImgBtn"
+					}, album => {
 						form.album_id.value = album.id;
 						$0.album_name.val(album.name);
 					});
@@ -283,7 +285,8 @@ let Modal = {
 
 	selectAlbum({
 		selectedId,
-		removeId
+		removeId,
+		removeEditBtn
 	} = {}, callback) {
 		return modal("Chọn một album ảnh", 850, `
 			<div class="w3-padding">
@@ -296,8 +299,6 @@ let Modal = {
 			</div>
 		`, $0 => {
 			let start = 0, len = 20, selected;
-
-			load();
 
 			function load(selectedId) {
 				getAlbums({
@@ -312,9 +313,12 @@ let Modal = {
 					dblclick: okFn,
 					mode: "select",
 					selectedId,
-					removeId
+					removeId,
+					removeEditBtn
 				});
 			}
+
+			load();
 
 			$0.list.css({
 				maxHeight: window.innerHeight - 300

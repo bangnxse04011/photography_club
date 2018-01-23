@@ -3,8 +3,9 @@ require 'util.php';
 
 $start = isset($_GET['start']) ? +$_GET['start'] : 0;
 $len = isset($_GET['len']) ? +$_GET['len'] : 20;
-$rand = isset($_GET['rand']) ? $_GET['rand'] : false;
+$rand = isset($_GET['rand']) ? +$_GET['rand'] : 0;
 $user_id = isset($_GET['user_id']) ? +$_GET['user_id'] : $meId;
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 
 $albums = [];
 $num = 0;
@@ -12,22 +13,27 @@ $num = 0;
 $order_by = $rand ? 'ORDER BY rand()' : '';
 
 if ($user_id === -1) {
-	$where_user_id = "user_id!=$meId";
+	$where_user_id = "albums.user_id!=$meId";
 }
 else if ($user_id === 0) {
 	$where_user_id = '1=1';
 }
 else {
-	$where_user_id = "user_id=$user_id";
+	$where_user_id = "albums.user_id=$user_id";
 }
 
+$search = "%$search%";
+
 $stm = $con->prepare("
-	SELECT * FROM albums
-	WHERE $where_user_id AND status=1
+	SELECT albums.*, users.name user_name
+	FROM albums
+	JOIN users
+	ON albums.user_id=users.id
+	WHERE $where_user_id AND albums.name LIKE ? AND albums.status=1
 	$order_by
 	LIMIT ?, ?
 ");
-$stm->bind_param('ii', $tmp = $start * $len, $len);
+$stm->bind_param('sii', $search, $tmp = $start * $len, $len);
 $stm->execute();
 
 if ($rs = $stm->get_result()) {

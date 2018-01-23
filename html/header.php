@@ -5,10 +5,11 @@
 	</div>
 	<div class="w3-col s3 w3-padding-bottom w3-hide-medium w3-hide-large userBtnSm">asd</div>
 	<form method="get" class="w3-col m5">
-		<input type="text" id="search" name="search" class="w3-col s10 w3-input w3-border" placeholder="Tìm kiếm">
+		<input type="text" id="search" name="search" class="w3-col s10 w3-input w3-border" placeholder="Tìm kiếm" autocomplete="off">
 		<button id="btnSearch" class="w3-col s2 w3-button w3-light-gray w3-border" style="padding-top:6px;padding-bottom:7px">
 			<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFjSURBVEhLxdVNKwVRHMfxCSspiZdAkaLIzkuQKJGdsGFhwRJJWLBSFgpl61WwpjyEHS9AHsrO88P392+mrumOc841Xb/6dOd/7nmYmXtmbvTfacIElmM6bsSf04UDfGXYRydKyhheoImusIqR2Bquoe/UZxRB6cMnXjGFKqSjtmmoj/r2wit1eIAG9avBkQGo7z1q1eDKPHTpO1b5ZRcaM2eVI6dQ51ar/NIGjTm26pdU4A23VoXlDvo9NEdmdP91JhdWheUSGqs5MlOJd9xYFRZd9QeK7bgfOYfOpNkqv7RAY86scmQR6rxplV+2oTGzVjnSgEfoVvWowRE9YOqrZ6deDT4Zhh6eJ4yj2M5Qm156z9DZ7yEok9CZabB2yAIGMRQfJ7um0BKC0o1DpCdKHGEr1Ra8iNIOvdjWsYEZdCDJCgoX0X9G7kkvojr3lH2RE1Qj92gRTe79XJSSmvizHImib16pa7OPH/CXAAAAAElFTkSuQmCC">
 		</button>
+		<ul id="searchSuggest" class="w3-ul w3-white w3-card w3-round"></ul>
 	</form>
 	<div class="w3-col m4 w3-right-align w3-hide-small userBtnMdLg">
 		<?php if ($meId) { ?>
