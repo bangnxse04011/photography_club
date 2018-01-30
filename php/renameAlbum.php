@@ -6,14 +6,15 @@ $album_id = $_POST['album_id'];
 
 if ($meId && preg_match('/^.{1,200}$/', $name) && $album_id > 0) {
 	$stm = $con->prepare("
-		SELECT id FROM albums
-		WHERE id=? AND status=1
+		SELECT count(0)
+		FROM albums
+		WHERE name=? AND user_id=? AND status=1
 	");
-	$stm->bind_param('i', $album_id);
+	$stm->bind_param('si', $name, $meId);
 	$stm->execute();
 
 	if ($rs = $stm->get_result()) {
-		if ($rs->num_rows) {
+		if ($rs->fetch_row()[0]) {
 			die('Tên album đã tồn tại.');
 		}
 		else {

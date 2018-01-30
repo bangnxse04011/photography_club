@@ -13,7 +13,7 @@ $me = [];
 $sett = [];
 $view = "home";
 
-$con = new mysqli(SERVER, USERNAME, PASSWORD, DATABASE);
+$con = @new mysqli(SERVER, USERNAME, PASSWORD, DATABASE);
 
 if ($con->connect_errno) {
 	die('Kết nối dữ liệu thất bại: '.$con->connect_error);

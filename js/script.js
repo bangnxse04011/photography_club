@@ -18,8 +18,34 @@ $(window)
 		else {
 			$("#sidebar").show();
 		}
+
+		$("#main").css({
+			height: `calc(100% - ${$("#header").innerHeight()}px)`
+		});
 	})
 	.resize();
+
+$(document).keydown(event => {
+	let key = event.key;
+
+	switch (key) {
+		case "ArrowLeft":
+			if ($viewImg) {
+				$viewImg.prev.click();
+			}
+			break;
+
+		case "ArrowRight":
+			if ($viewImg) {
+				$viewImg.next.click();
+			}
+			break;
+
+		case "Escape":
+			$viewImg.fn.close();
+			break;
+	}
+});
 
 $(".w3-dropdown-click").click(function() {
 	$(this)
@@ -37,14 +63,22 @@ if (!meId) {
 	});
 }
 
-$("#btnSidebar").click(event => {
-	$("#sidebar").toggle();
-});
+$("#btnSidebar")
+	.click(event => {
+		$("#sidebar").toggle();
+		$("#main").css("width", `calc(100% - ${$("#sidebar").width()}px)`);
+	})
+	.click()
+	.click();
 
-$("#search")
+frmSearch.onsubmit = function(event) {
+	event.preventDefault();
+
+	location.assign("?view=search&search=" + encodeURIComponent(search.value));
+};
+
+$(search)
 	.on("input", function(event) {
-		let $searchSuggest = $("#searchSuggest");
-
 		if (xhrSearchSuggest) {
 			xhrSearchSuggest.abort();
 		}
@@ -87,6 +121,12 @@ $("#search")
 		else {
 			$searchSuggest.empty();
 		}
+	})
+	.focus(event => {
+		$searchSuggest.show();
+	})
+	.blur(event => {
+		$searchSuggest.hide();
 	});
 
 $(".upload").click(event => {

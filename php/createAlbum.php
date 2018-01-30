@@ -11,8 +11,12 @@ if (
 	(preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date) || !$date) &&
 	preg_match('/^.{0,200}$/', $location)
 ) {
-	$stm = $con->prepare("SELECT count(*) FROM albums WHERE name=? AND status=1");
-	$stm->bind_param('s', $name);
+	$stm = $con->prepare("
+		SELECT count(0)
+		FROM albums
+		WHERE name=? AND user_id=? AND status=1
+	");
+	$stm->bind_param('si', $name, $meId);
 	$stm->execute();
 
 	if ($rs = $stm->get_result()) {

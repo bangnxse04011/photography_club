@@ -19,7 +19,10 @@ require 'php/util.php';
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+	<script src="https://cdn.rawgit.com/hammerjs/jquery.hammer.js/90c2f3bb/jquery.hammer.js"></script>
 	<script src="https://apis.google.com/js/api:client.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCBJLRR00S6HS7aChSNHHce-rpiylOcsU&libraries=places"></script>
 
 	<script>
 		$(function() {

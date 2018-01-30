@@ -3,7 +3,7 @@
 		<img src="https://png.icons8.com/material/24/000000/home.png">
 		<span class="w3-margin-left">Trang chủ</span>
 	</a>
-	<a href="#" class="w3-bar-item w3-button">
+	<a href="?view=history" class="w3-bar-item w3-button">
 		<img src="https://png.icons8.com/material/24/000000/time-machine.png">
 		<span class="w3-margin-left">Lịch sử</span>
 	</a>

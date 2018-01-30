@@ -220,7 +220,7 @@ let Modal = {
 			let form = $0.form[0];
 
 			if (album) {
-				$0.title.text(`Tải lên ảnh vào album: ${album.name}`);
+				$0.title.html(`Tải lên ảnh vào album: <span class="w3-text-teal w3-margin-left">${text(album.name)}</span>`);
 				$0.album_name.val(album.name);
 				form.album_id.value = album.id;
 			}
@@ -363,6 +363,8 @@ let Modal = {
 				</div>
 			</form>
 		`, $0 => {
+			let mapApi;
+			
 			$0.name
 				.on("input", function() {
 					this.setCustomValidity("");
@@ -388,6 +390,8 @@ let Modal = {
 				})
 				.get(0)
 				.valueAsNumber = Date.now();
+
+			mapApi = new google.maps.places.Autocomplete($0.location[0]);
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -701,14 +705,14 @@ let Modal = {
 			height: "100%"
 		}, `
 			<div class="w3-display-container w3-text-white __view" style="position:fixed;width:100%;height:100%;background:#0e0e0e">
-				<img class="w3-display-topleft __img __img2" alt="image">
-				<img class="w3-display-topleft __img __img1" alt="image" style="display:none">
+				<img class="w3-display-topleft w3-noselect __img __img2" alt="image">
+				<img class="w3-display-topleft w3-noselect __img __img1" alt="image" style="display:none">
 				<div class="__tools">
 					<button class="w3-display-left w3-button w3-transparent w3-hover-dark-gray __prev" style="padding:32px 16px">
-						<img src="https://png.icons8.com/material/48/ffffff/back.png" class="w3-noevent">
+						<img src="https://png.icons8.com/material/48/ffffff/back.png" class="w3-text-outline-black w3-noevent">
 					</button>
 					<button class="w3-display-right w3-button w3-transparent w3-hover-dark-gray __next" style="padding:32px 16px">
-						<img src="https://png.icons8.com/material/48/ffffff/forward.png" class="w3-noevent">
+						<img src="https://png.icons8.com/material/48/ffffff/forward.png" class="w3-text-outline-black w3-noevent">
 					</button>
 					<div class="w3-display-topleft w3-row w3-bar w3-large" style="background:#0008">
 						<div class="w3-col s5">
@@ -722,6 +726,7 @@ let Modal = {
 								<a class="__download">
 									<img class="w3-bar-item w3-button w3-hover-dark-gray" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
 								</a>
+								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Xem toàn màn hình">
 								<img class="w3-bar-item w3-button w3-hover-red __close" src="https://png.icons8.com/material/24/ffffff/delete-sign.png" title="Đóng">
 							</div>
 						</div>
@@ -729,6 +734,8 @@ let Modal = {
 				</div>
 			</div>
 		`, $0 => {
+			let fitX, fitY, fitX0, fitY0;
+
 			$0.modalContent.css({
 				borderRadius: 0
 			});
@@ -742,11 +749,36 @@ let Modal = {
 					objectFit: "scale-down"
 				});
 
+			$0.img1
+				.css({
+					cursor: "zoom-in"
+				})
+				.hammer()
+				.on("tap", function(event) {
+					if (this.naturalWidth > this.width || this.naturalHeight > this.height) {
+						if ($0.img1.css("objectFit") === "none") {
+							$0.img1.css({
+								objectFit: "scale-down",
+								objectPosition: "initial",
+								cursor: "zoom-in"
+							});
+						}
+						else {
+							fitX = Math.round(this.naturalWidth / 2 - this.width / 2);
+							fitY = Math.round(this.naturalHeight / 2 - this.height / 2);
+
+							$0.img1.css({
+								objectFit: "none",
+								objectPosition: `${-fitX}px ${-fitY}px`,
+								cursor: "zoom-out"
+							});
+						}
+					}
+				});
+
 			$0.view
 				.mousemove(function(event) {
-					if (
-						event.target === $0.view[0] || event.target === $0.img[1]
-					) {
+					if (event.target === $0.view[0] || event.target === $0.img[1]) {
 						if ($0.tools.css("display") === "none") {
 							if (
 								Math.max(
@@ -792,11 +824,69 @@ let Modal = {
 							.show()
 							.data("hoverTools", true);
 					}
+				})
+				.hammer()
+				.on("panstart", event => {
+					fitX0 = fitX;
+					fitY0 = fitY;
+
+					$0.img1.css({
+						cursor: "-webkit-grab"
+					});
+				})
+				.on("pan", event => {
+					if ($0.img1.css("objectFit") === "none") {
+						let img1 = $0.img1[0];
+
+						fitX = fitX0;
+						fitY = fitY0;
+
+						if (img1.naturalWidth > img1.width) {
+							fitX -= event.gesture.deltaX;
+
+							if (fitX < 0) {
+								fitX = 0;
+							}
+							else if (fitX > img1.naturalWidth - img1.width) {
+								fitX = img1.naturalWidth - img1.width;
+							}
+						}
+						if (img1.naturalHeight > img1.height) {
+							fitY -= event.gesture.deltaY;
+
+							if (fitY < 0) {
+								fitY = 0;
+							}
+							else if (fitY > img1.naturalHeight - img1.height) {
+								fitY = img1.naturalHeight - img1.height;
+							}
+						}
+
+						$0.img1.css({
+							objectPosition: `${-fitX}px ${-fitY}px`,
+							cursor: "-webkit-grabbing"
+						});
+					}
+				})
+				.on("panend", event => {
+					$0.img1.css({
+						cursor: $0.img1.css("objectFit") === "none" ? "zoom-out" : "zoom-in"
+					});
 				});
 
 			$0.tools
 				.delay(1000)
 				.fadeOut(200);
+
+			$0.fullscreen
+				.click(event => {
+					if (document.webkitIsFullScreen) {
+						document.webkitExitFullscreen();
+					}
+					else {
+						$0.view[0].webkitRequestFullscreen();
+					}
+				});
 
 			load(img);
 
@@ -846,7 +936,7 @@ let Modal = {
 
 				$0.img2
 					.prop("src", imgUrl)
-					.finish()
+					.velocity("finish")
 					.velocity({
 						left: [0, nav * 100 + "%"]
 					}, 400, e => {
@@ -856,20 +946,31 @@ let Modal = {
 					});
 
 				$0.img1
-					.finish()
+					.velocity("finish")
 					.velocity({
 						left: [nav * -100 + "%", 0]
 					}, 400, e => {
 						$(e)
 							.show()
 							.prop("src", imgUrl)
-							.css("left", 0);
+							.css({
+								left: 0,
+								objectFit: "scale-down",
+								objectPosition: "initial",
+								cursor: "zoom-in"
+							});
 					});
 
 				if (prev) {
 					$0.prev
 						.click(event => {
 							load(prev, -1);
+
+							$0.tools
+								.finish()
+								.show()
+								.delay(1000)
+								.fadeOut(200);
 						})
 						.prop("disabled", false)
 						.removeClass("w3-disabled");
@@ -879,6 +980,12 @@ let Modal = {
 					$0.next
 						.click(event => {
 							load(next, 1);
+
+							$0.tools
+								.finish()
+								.show()
+								.delay(1000)
+								.fadeOut(200);
 						})
 						.prop("disabled", false)
 						.removeClass("w3-disabled");

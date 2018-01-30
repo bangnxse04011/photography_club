@@ -16,21 +16,28 @@ function getAlbum({
 						.text(album.name)
 						.end()
 					.find(".date")
-						.text(dateStr(album.date))
-						.end()
-					.find(".date_last_upload")
-						.text(dateStr(album.date_last_upload, true))
+						.text(dateStr(album.date) || "--")
 						.end()
 					.find(".location")
-						.text(album.location)
+						.text(album.location || "--")
 						.end()
-					.find(".addImg")
-						.click(() => {
-							Modal.upload({
-								album: album,
-								canSelectAlbum: false
-							});
-						});
+					.find(".user_name")
+						.text(album.user_name)
+						.end()
+					.find(".date_last_upload")
+						.text(dateStr(album.date_last_upload, true));
+
+				if (album.user_id === meId) {
+					elm
+						.find(".addImg")
+							.click(() => {
+								Modal.upload({
+									album: album,
+									canSelectAlbum: false
+								});
+							})
+							.show();
+				}
 
 				if (album.imgs.length) {
 					let $imgs = elm.find(".imgs"), height;
@@ -38,14 +45,12 @@ function getAlbum({
 					$imgs.empty();
 
 					for (let img of album.imgs) {
-						let $img, colm;
+						let $img, colm, imgElm;
 
 						$img = $(`
 							<div class="w3-col s12 m${col < 6 ? col + 1 : col} l${col} w3-margin-bottom">
 								<div class="w3-display-container w3-card w3-white w3-hover-shadow w3-pointer w3-animate-opacity">
-									<div class="w3-padding w3-overflow-hidden">
-										<img src="img/upload/${img.id}.${img.type}" class="w3-img-contrast w3-hover-zoom img" alt="image" style="width:100%;object-fit:cover">
-									</div>
+									<div class="img"></div>
 									<div class="w3-display-bottommiddle w3-display-hover w3-block w3-text-white w3-noevent" style="padding:64px 8px 12px;background:linear-gradient(#2220, #2227, #222a)">
 										<div class="w3-ellipsis name"></div>
 									</div>
@@ -69,7 +74,7 @@ function getAlbum({
 							.children()
 								.click(function(event) {
 									if (!event.target.classList.contains("editBtn")) {
-										Modal.viewImg(img, album, len);
+										$viewImg = Modal.viewImg(img, album, len);
 									}
 								})
 								.hover(function() {
@@ -85,17 +90,22 @@ function getAlbum({
 										.toggle();
 								})
 								.end()
-							.find(".img")
-								.on("load", function() {
-									$img.show();
-
-									$(this).css({
-										height: height || (height = $img.children().width() * 0.8)
-									});
-								})
-								.end()
 							.find(".name")
 								.text(img.name);
+
+						imgElm = new Image;
+						imgElm.src = `img/upload/${img.id}.${img.type}`;
+
+						imgElm.onload = event => {
+							$img
+								.show()
+								.find(".img")
+									.css({
+										width: "100%",
+										height: height || (height = $img.children().width() * 0.8),
+										background: `url(${imgElm.src}) center/cover no-repeat`
+									});
+						};
 
 						if (album.user_id === meId) {
 							$img
@@ -145,7 +155,6 @@ function getAlbum({
 						}
 						else {
 							$img.find(".editBtn").remove();
-							elm.find(".addImg").remove();
 						}
 					}
 				}
@@ -168,9 +177,10 @@ function getAlbums({
 	mode = "view",
 	selectedId,
 	removeId,
-	removeEditBtn,
+	removeEditBtn = "",
 	pages = true,
 	rand,
+	search,
 	/*
 		user_id = 0: Tất cả user
 		user_id = -1: Tất cả user trừ tôi
@@ -180,7 +190,13 @@ function getAlbums({
 	elm = $(elm);
 
 	function load(selectedId) {
-		return $.getJSON("php/getAlbums.php", {start, len, rand, user_id}, ([albums, num]) => {
+		return $.getJSON("php/getAlbums.php", {
+			start,
+			len,
+			rand,
+			search,
+			user_id
+		}, ([albums, num]) => {
 			if (albums.length) {
 				let isSelected, height;
 
@@ -203,7 +219,7 @@ function getAlbums({
 								<b class="w3-ellipsis name"></b>
 								<div class="w3-text-gray" style="font-size:13px">
 									<div class="date"></div>
-									<div class="w3-ellipsis location" title="${text(album.location)}"></div>
+									<div class="w3-ellipsis location"></div>
 								</div>
 								<div class="w3-dropdown-click w3-display-topright w3-display-hover w3-border w3-white editBtn" style="margin:4px;padding:2px">
 									<img src="https://png.icons8.com/material/20/000000/pencil.png" class="w3-noevent">
@@ -223,90 +239,90 @@ function getAlbums({
 					$album
 						.hide()
 						.children()
-						.click(function(event) {
-							if (!event.target.classList.contains("editBtn")) {
-								switch (mode) {
+							.click(function(event) {
+								if (!event.target.classList.contains("editBtn")) {
+									switch (mode) {
 
-									case "view":
-										location.href = `?view=album&id=${album.id}`;
-										break;
+										case "view":
+											location.href = `?view=album&id=${album.id}`;
+											break;
 
-									case "select":
-										this.parentElement.scrollIntoViewIfNeeded();
-										active(this, 1, "album", "w3-light-blue", "w3-white");
-										break;
+										case "select":
+											this.parentElement.scrollIntoViewIfNeeded();
+											active(this, 1, "album", "w3-light-blue", "w3-white");
+											break;
+									}
+
+									click.call(this, album);
 								}
+							})
+							.dblclick(dblclick)
+							.hover(function() {
+								if (album.imgs.length > 1) {
+									hoverImg = 0;
 
-								click.call(this, album);
-							}
-						})
-						.dblclick(dblclick)
-						.hover(function() {
-							if (album.imgs.length > 1) {
+									let hover = () => {
+										hoverImg++;
+
+										if (hoverImg >= album.imgs.length) {
+											hoverImg = 0;
+										}
+
+										$(this)
+											.find(".img")
+											.prop("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
+											.one("load", function(event) {
+												$(this)
+													.removeClass("w3-animate-opacity")
+													.show()
+													.addClass("w3-animate-opacity");
+
+												timeout = setTimeout(hover, 2000);
+											});
+
+										clearTimeout(timeout);
+									};
+
+									timeout = setTimeout(hover, 500);
+								}
+							}, function() {
+								clearTimeout(timeout);
 								hoverImg = 0;
 
-								let hover = () => {
-									hoverImg++;
-
-									if (hoverImg >= album.imgs.length) {
-										hoverImg = 0;
-									}
-
+								if (album.imgs.length > 1) {
 									$(this)
 										.find(".img")
-										.prop("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
-										.one("load", function(event) {
-											$(this)
-												.removeClass("w3-animate-opacity")
-												.show()
-												.addClass("w3-animate-opacity");
+										.attr("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
+										.velocity("finish");
+								}
 
-											timeout = setTimeout(hover, 2000);
-										});
-
-									clearTimeout(timeout);
-								};
-
-								timeout = setTimeout(hover, 500);
-							}
-						}, function() {
-							clearTimeout(timeout);
-							hoverImg = 0;
-
-							if (album.imgs.length > 1) {
-								$(this)
-									.find(".img")
-									.attr("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
-									.velocity("finish");
-							}
-
-							$album.find(".w3-dropdown-content").hide();
-						})
+								$album.find(".w3-dropdown-content").hide();
+							})
 						.find(".img")
-						.prop("src",
-							album.imgs.length ?
-							`img/upload/${album.imgs[0].id}.${album.imgs[0].type}` :
-							"https://png.icons8.com/office/80/picture.png"
-						)
-						.on("load", function() {
-							$album.show();
+							.prop("src",
+								album.imgs.length ?
+								`img/upload/${album.imgs[0].id}.${album.imgs[0].type}` :
+								"https://png.icons8.com/office/80/picture.png"
+							)
+							.on("load", function() {
+								$album.show();
 
-							$(this)
-								.css({
-									width: "100%",
-									height: height || (height = $album.children().width() * 0.6),
-									objectFit() {
-										return album.imgs.length ? "cover" : "none"
-									}
-								});
-						})
-						.end()
+								$(this)
+									.css({
+										width: "100%",
+										height: height || (height = $album.children().width() * 0.6),
+										objectFit() {
+											return album.imgs.length ? "cover" : "none"
+										}
+									});
+							})
+							.end()
 						.find(".w3-dropdown-click")
-						.click(function(event) {
-							$(this)
-								.find(".w3-dropdown-content")
-								.toggle();
-						});
+							.click(function(event) {
+								$(this)
+									.find(".w3-dropdown-content")
+									.toggle();
+							});
 
 					if (album.user_id === meId) {
 						$album
@@ -386,14 +402,14 @@ function getAlbums({
 					function fillDate(date) {
 						$album
 							.find(".date")
-							.text("Ngày chụp: " + dateStr(date));
+							.text("Ngày chụp: " + (dateStr(date) || "--"));
 					}
 
 					function fillLocation(location) {
 						$album
 							.find(".location")
 							.prop("title", location)
-							.text("Địa điểm: " + location);
+							.text("Địa điểm: " + (location || "--"));
 					}
 				}
 

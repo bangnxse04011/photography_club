@@ -63,12 +63,13 @@
 													if ($stm->execute()) {
 														$act = 'upload';
 														$date = date('Y-m-d H:i:s');
+														$time = date('H:i:s');
 
 														$stm = $con->prepare("
-															INSERT INTO histories (user_id, act, album_id, img_id, date)
-															VALUES (?, ?, ?, ?, ?)
+															INSERT INTO histories (user_id, act, album_id, img_id, date, time)
+															VALUES (?, ?, ?, ?, ?, ?)
 														");
-														$stm->bind_param('isiis', $meId, $act, $album_id, $insert_id, $date);
+														$stm->bind_param('isiiss', $meId, $act, $album_id, $insert_id, $date, $time);
 
 														if ($stm->execute()) {
 															if (move_uploaded_file(
@@ -158,13 +159,14 @@
 
 															if ($stm->execute()) {
 																$act = 'upload';
-																$date = date('Y-m-d H:i:s');
+																$date = date('Y-m-d');
+																$time = date('H:i:s');
 
 																$stm = $con->prepare("
-																	INSERT INTO histories (user_id, act, album_id, img_id, date)
-																	VALUES (?, ?, ?, ?, ?)
+																	INSERT INTO histories (user_id, act, album_id, img_id, date, time)
+																	VALUES (?, ?, ?, ?, ?, ?)
 																");
-																$stm->bind_param('isiis', $meId, $act, $album_id, $insert_id, $date);
+																$stm->bind_param('isiiss', $meId, $act, $album_id, $insert_id, $date, $time);
 
 																if ($stm->execute()) {
 																	if (file_put_contents("$upload_dir/$insert_id.$type", $content)) {

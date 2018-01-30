@@ -24,6 +24,8 @@ else {
 
 $search = "%$search%";
 
+$tmp = $start * $len;
+
 $stm = $con->prepare("
 	SELECT albums.*, users.name user_name
 	FROM albums
@@ -33,7 +35,7 @@ $stm = $con->prepare("
 	$order_by
 	LIMIT ?, ?
 ");
-$stm->bind_param('sii', $search, $tmp = $start * $len, $len);
+$stm->bind_param('sii', $search, $tmp, $len);
 $stm->execute();
 
 if ($rs = $stm->get_result()) {
