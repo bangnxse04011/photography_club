@@ -33,11 +33,22 @@ if ($rs = $stm->get_result()) {
 		$histories[$history['date']][] = $history;
 	}
 
-	$result['list'] = $date ? $histories[$date] : current($histories);
-
-	$next = next($histories);
-
-	$result['next'] = $next ? $next[0]['date'] : null;
+	if ($date) {
+		foreach ($histories as $k => $v) {
+			if ($k === $date) {
+				$result['list'] = $v;
+			}
+			else if ($result['list']) {
+				$result['next'] = $k;
+				break;
+			}
+		}
+	}
+	else {
+		$result['list'] = current($histories);
+		$next = next($histories);
+		$result['next'] = $next ? $next[0]['date'] : null;
+	}
 }
 
 echo json_encode($result);

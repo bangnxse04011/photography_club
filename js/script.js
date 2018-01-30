@@ -42,7 +42,9 @@ $(document).keydown(event => {
 			break;
 
 		case "Escape":
-			$viewImg.fn.close();
+			if ($viewImg) {
+				$viewImg.fn.close();
+			}
 			break;
 	}
 });

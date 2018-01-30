@@ -2,16 +2,34 @@ loadHistory();
 
 function loadHistory() {
 	let index = 0,
+		lockLoad,
+		next = "",
 		$myHistory = $(".myHistory"),
 		$list = $myHistory.find(".list");
 
 	load();
 
+	main.onscroll = function(event) {
+		if (
+			!lockLoad &&
+			next !== undefined &&
+			this.scrollTop >= this.scrollHeight - this.clientHeight
+		) {
+			load(next);
+		}
+	};
+
 	function load(date) {
+		lockLoad = true;
+
+		$myHistory.find(".loader").show();
+
 		$.getJSON("php/getHistories.php", {
 			date: date
 		}, data => {
 			let $ul, date;
+
+			$myHistory.find(".loader").hide();
 
 			if (data.list && data.list[0]) {
 				date = data.list[0].date;
@@ -37,6 +55,18 @@ function loadHistory() {
 					`);
 				}
 				$ul.append($li);
+			}
+
+			if (data.next) {
+				next = data.next;
+				lockLoad = false;
+
+				if (main.scrollTop >= main.scrollHeight - main.clientHeight) {
+					load(next);
+				}
+			}
+			else {
+				next = undefined;
 			}
 		});
 	}

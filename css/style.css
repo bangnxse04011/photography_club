@@ -129,6 +129,15 @@ hr {
 .w3-hide-fullscreen:fullscreen {
 	display: none!important;
 }
+.w3-loader {
+	width: 40px;
+	height: 40px;
+	border: solid 8px #bbb;
+	border-top-color: #2196f3;
+	border-radius: 50%;
+	display: inline-block;
+	animation: w3-spin 2s infinite linear;
+}
 img.w3-img-empty:not([src]) {
 	display: none;
 }
