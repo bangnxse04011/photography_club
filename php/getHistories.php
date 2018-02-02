@@ -1,56 +1,93 @@
 <?php
 require 'util.php';
 
-$date = isset($_GET['date']) ? $_GET['date'] : "";
+$date = isset($_GET['date']) ? $_GET['date'] : '';
 
-$result = [
-	'list' => null,
-	'next' => null
-];
-$histories = [];
+if ($meId && (!$date || preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date))) {
+	$result = [
+		'list' => null,
+		'current' => null,
+		'next' => null
+	];
+	$histories = [];
 
-$stm = $con ->prepare("
-	SELECT
-		h.*,
-		a.name album_name,
-		i.name img_name,
-		i.type img_type
-	FROM histories h
-	JOIN albums a
-	ON h.album_id=a.id
-	JOIN imgs i
-	ON h.img_id=i.id
-	WHERE
-		h.user_id=?
-	ORDER BY
-		h.date DESC
-");
-$stm->bind_param('i', $meId);
-$stm->execute();
+	$acts = [
+		'copy_img',
+		'create_album',
+		'delete_album',
+		'delete_img',
+		'move_img',
+		'rename_img',
+		'rename_album',
+		'upload'
+	];
 
-if ($rs = $stm->get_result()) {
-	while ($history = $rs->fetch_assoc()) {
-		$histories[$history['date']][] = $history;
-	}
+	foreach ($acts as $v) {
+		$rs = $con->query("
+			SELECT * FROM histories_{$v}
+			WHERE user_id=$meId
+		");
 
-	if ($date) {
-		foreach ($histories as $k => $v) {
-			if ($k === $date) {
-				$result['list'] = $v;
+		while ($history = $rs->fetch_assoc()) {
+			$history['act'] = $v;
+
+			if (array_key_exists('img_id', $history)) {
+				$rs2 = $con->query("
+					SELECT
+						i.type img_type,
+						i.status img_status,
+						a.id img_album_id,
+						(SELECT count(0) FROM imgs ii WHERE ii.album_id=a.id AND ii.status=1) album_num_img
+					FROM imgs i
+					JOIN albums a
+					ON i.album_id=a.id
+					WHERE i.id=$history[img_id]
+				");
+
+				if ($row = $rs2->fetch_assoc()) {
+					foreach ($row as $k2 => $v2) {
+						$history[$k2] = $v2;
+					}
+				}
 			}
-			else if ($result['list']) {
-				$result['next'] = $k;
-				break;
-			}
+
+			$histories[$history['date']][$history['time']][] = $history;
 		}
 	}
-	else {
-		$result['list'] = current($histories);
-		$next = next($histories);
-		$result['next'] = $next ? $next[0]['date'] : null;
-	}
-}
 
-echo json_encode($result);
+	if (count($histories)) {
+		foreach ($histories as $k => $v) {
+			uksort($histories[$k], function($a, $b) {
+				return strtotime($b) - strtotime($a);
+			});
+		}
+
+		uksort($histories, function($a, $b) {
+			return strtotime($b) - strtotime($a);
+		});
+		if ($date) {
+			foreach ($histories as $k => $v) {
+				if ($k === $date) {
+					$result['list'] = $v;
+					$result['current'] = $k;
+				}
+				else if ($result['list']) {
+					$result['next'] = $k;
+					break;
+				}
+			}
+		}
+		else {
+			$result['list'] = current($histories);
+			$result['current'] = current($result['list'])[0]['date'];
+
+			$next = next($histories);
+
+			$result['next'] = $next ? current($next)[0]['date'] : null;
+		}
+	}
+
+	echo json_encode($result);
+}
 
 $con->close();

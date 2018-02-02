@@ -9,7 +9,11 @@ if (
 	preg_match('/^.{0,200}$/', $location) &&
 	$album_id > 0
 ) {
-	$stm = $con->prepare("UPDATE albums SET location=? WHERE id=? AND user_id=? AND status=1");
+	$stm = $con->prepare("
+		UPDATE albums
+		SET location=?
+		WHERE id=? AND user_id=? AND status=1
+	");
 	$stm->bind_param('sii', $location, $album_id, $meId);
 
 	if (!$stm->execute()) {

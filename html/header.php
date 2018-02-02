@@ -5,7 +5,7 @@
 	</div>
 	<div class="w3-col s3 w3-padding-bottom w3-hide-medium w3-hide-large userBtnSm">asd</div>
 	<form method="get" id="frmSearch" class="w3-col m5">
-		<input type="text" id="search" name="search" class="w3-col s10 w3-input w3-border" placeholder="Tìm kiếm" autocomplete="off">
+		<input type="text" id="search" name="search" class="w3-col s10 w3-input w3-border" placeholder="Tìm kiếm" autocomplete="off" required>
 		<button id="btnSearch" class="w3-col s2 w3-button w3-light-gray w3-border" style="padding-top:6px;padding-bottom:7px">
 			<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFjSURBVEhLxdVNKwVRHMfxCSspiZdAkaLIzkuQKJGdsGFhwRJJWLBSFgpl61WwpjyEHS9AHsrO88P392+mrumOc841Xb/6dOd/7nmYmXtmbvTfacIElmM6bsSf04UDfGXYRydKyhheoImusIqR2Bquoe/UZxRB6cMnXjGFKqSjtmmoj/r2wit1eIAG9avBkQGo7z1q1eDKPHTpO1b5ZRcaM2eVI6dQ51ar/NIGjTm26pdU4A23VoXlDvo9NEdmdP91JhdWheUSGqs5MlOJd9xYFRZd9QeK7bgfOYfOpNkqv7RAY86scmQR6rxplV+2oTGzVjnSgEfoVvWowRE9YOqrZ6deDT4Zhh6eJ4yj2M5Qm156z9DZ7yEok9CZabB2yAIGMRQfJ7um0BKC0o1DpCdKHGEr1Ra8iNIOvdjWsYEZdCDJCgoX0X9G7kkvojr3lH2RE1Qj92gRTe79XJSSmvizHImib16pa7OPH/CXAAAAAElFTkSuQmCC">
 		</button>
@@ -25,9 +25,13 @@
 							<div class="w3-small w3-text-gray"><?php echo "$me[name]"?></div>
 						</div>
 					</div>
-					<a href="#" class="w3-bar-item w3-button w3-hover-light-gray">
+					<a href="?view=myAlbums" class="w3-bar-item w3-button w3-hover-light-gray">
 						<img src="https://png.icons8.com/windows/24/000000/stack-of-photos.png">
 						<span class="w3-margin-left">Album ảnh</span>
+					</a>
+					<a href="javascript:" class="w3-bar-item w3-button w3-hover-light-gray btnChangePass">
+						<img src="https://png.icons8.com/windows/24/000000/password.png">
+						<span class="w3-margin-left">Đổi mật khẩu</span>
 					</a>
 					<a href="php/logout.php" class="w3-bar-item w3-button w3-hover-light-gray">
 						<img src="https://png.icons8.com/windows/24/000000/exit.png">

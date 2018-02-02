@@ -20,7 +20,7 @@ $(window)
 		}
 
 		$("#main").css({
-			height: `calc(100% - ${$("#header").innerHeight()}px)`
+			height: `calc(100% - ${header.clientHeight}px)`
 		});
 	})
 	.resize();
@@ -64,14 +64,31 @@ if (!meId) {
 		Modal.login();
 	});
 }
+else {
+	$(".btnChangePass").click(event => {
+		Modal.changePass();
+	});
+}
+
+active($(`#sidebar> [data-view=${view}]`), 0, "", "w3-light-gray");
 
 $("#btnSidebar")
-	.click(event => {
+	.click((event) => {
 		$("#sidebar").toggle();
-		$("#main").css("width", `calc(100% - ${$("#sidebar").width()}px)`);
-	})
-	.click()
-	.click();
+		$("#main").css({
+			width: `calc(100% - ${sidebar.clientWidth}px)`
+		});
+
+		sessionStorage.sidebar = sidebar.clientWidth ? "show" : "hide";
+	});
+
+if (sessionStorage.sidebar === "hide") {
+	$("#sidebar").hide();
+}
+
+$("#main").css({
+	width: `calc(100% - ${sidebar.clientWidth}px)`
+});
 
 frmSearch.onsubmit = function(event) {
 	event.preventDefault();
@@ -104,16 +121,17 @@ $(search)
 
 						$album = $(`
 							<li class="w3-row w3-pointer w3-hover-light-gray">
-									<div class="w3-col s2">
-										<img src="img/upload/${album.imgs[0].id}.${album.imgs[0].type}" style="width:28px;height:28px;object-fit:cover">
-									</div>
-									<div class="w3-col s10 w3-ellipsis">${text(album.name)}</div>
+								<div class="w3-col s2">
+									<img src="thumb.php?id=${album.imgs[0].id}&type=${album.imgs[0].type}&s=24" style="width:24px;height:24px;object-fit:cover">
+								</div>
+								<div class="w3-col s6 w3-ellipsis">${text(album.name)}</div>
+								<div class="w3-col s4 w3-small w3-text-gray w3-ellipsis" style="padding-top:3px">${album.location}</div>
 							</li>
 						`);
 						$searchSuggest.append($album);
 
 						$album
-							.click(function(event) {
+							.mousedown(function(event) {
 								location.href = `?view=album&id=${album.id}`;
 							});
 					}
@@ -131,10 +149,21 @@ $(search)
 		$searchSuggest.hide();
 	});
 
-$(".upload").click(event => {
-	Modal[meId ? "upload" : "login"]();
+$(".history").click(event => {
+	if (!meId) {
+		Modal.login();
+		return false;
+	}
 });
 
 $(".setting").click(event => {
 	Modal.setting();
+});
+
+$(".upload").click(event => {
+	Modal[meId ? "upload" : "login"]();
+});
+
+setTimeout(() => {
+	section.style.visibility = "visible";
 });

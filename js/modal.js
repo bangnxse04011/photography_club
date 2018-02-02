@@ -175,6 +175,58 @@ let Modal = {
 		});
 	},
 
+	changePass() {
+		return modal("Đổi mật khẩu", 300, `
+			<form class="w3-padding __form">
+				<div class="w3-padding-top">
+					<label for="310118175954">Mật khẩu hiện tại</label><br>
+					<input type="password" name="pass" id="310118175954" class="w3-input w3-border" minlength="6" maxlength="50" required>
+				</div">
+				<div class="w3-padding-top">
+					<label for="310118180330">Mật khẩu mới</label><br>
+					<input type="password" name="newpass" id="310118180330" class="w3-input w3-border" minlength="6" maxlength="50" required>
+				</div>
+				<div class="w3-padding-top">
+					<label for="310118180507">Nhập lại mật khẩu mới</label><br>
+					<input type="password" name="renewpass" id="310118180507" class="w3-input w3-border" minlength="6" maxlength="50" required>
+				</div>
+				<div class="w3-margin-top">
+					<input type="submit" class="w3-button w3-light-gray" value="OK">
+					<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
+				</div>
+			</form>
+		`, $0 => {
+			$0.form.submit(function(event) {
+				event.preventDefault();
+
+				if (this.newpass.value !== this.renewpass.value) {
+					Modal.alert("Mật khẩu nhập lại không khớp", () => {
+						this.renewpass.focus();
+					});
+				}
+				else {
+					Modal.wait(undefined, $1 => {
+						$.post("php/changePass.php", {
+							pass: this.pass.value,
+							newpass: this.newpass.value
+						}, err => {
+							$1.fn.close();
+
+							if (err) {
+								Modal.alert(err);
+							}
+							else {
+								Modal.alert("Đổi mật khẩu thành công.", () => {
+									$0.fn.close();
+								})
+							}
+						});
+					});
+				}
+			});
+		});
+	},
+
 	upload({
 		album,
 		canSelectAlbum = true
@@ -183,9 +235,9 @@ let Modal = {
 			<div class="w3-row">
 				<div class="w3-col m1">&nbsp;</div>
 				<form action="?view=upload" method="post" class="w3-col m10 w3-padding __form" enctype="multipart/form-data">
-					<h2 class="w3-padding-top w3-ellipsis __title"></h2>
+					<h2 class="w3-padding-top w3-padding-bottom w3-margin-bottom w3-border-bottom w3-border-light-gray w3-ellipsis __title"></h2>
 					<div class="w3-cell-row">
-						<div class="w3-cell w3-padding-right">
+						<div class="w3-cell w3-padding-right" style="border-right:solid 3px #ddd">
 							<h6>Tải lên các tập tin hình ảnh</h6>
 							<input type="file" name="files[]" class="w3-input __files" accept=".png, .jpg, .gif" multiple required>
 							<small class="w3-text-gray">
@@ -194,7 +246,7 @@ let Modal = {
 								- Có thể chọn tối đa 20 tập tin (giữ phím Ctrl để chọn).
 							</small>
 						</div>
-						<div class="w3-cell w3-leftbar w3-padding-left">
+						<div class="w3-cell w3-padding-left" style="border-left:solid 3px #ddd">
 							<h6>Tải lên tập tin nén</h6>
 							<input type="file" name="filezip" class="w3-input __filezip" accept=".zip">
 							<small class="w3-text-gray">
@@ -363,8 +415,6 @@ let Modal = {
 				</div>
 			</form>
 		`, $0 => {
-			let mapApi;
-			
 			$0.name
 				.on("input", function() {
 					this.setCustomValidity("");
@@ -391,7 +441,10 @@ let Modal = {
 				.get(0)
 				.valueAsNumber = Date.now();
 
-			mapApi = new google.maps.places.Autocomplete($0.location[0]);
+			try {
+				new google.maps.places.Autocomplete($0.location[0]);
+			}
+			catch(e) {}
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -432,7 +485,7 @@ let Modal = {
 					<input type="text" name="name" class="w3-input w3-border __name" value="${text(album.name)}" minlength="1" maxlength="200" data-err-blank="Tên album phải chứa ít nhất một ký tự không phải khoảng trắng." autofocus required>
 				</div>
 				<input type="submit" value="OK" class="w3-button w3-light-gray">
-				<div class="w3-button w3-light-gray __close">Hủy</div>
+				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
 			$0.name
@@ -488,7 +541,7 @@ let Modal = {
 					<input type="date" name="date" class="w3-input w3-border __date" value="${album.date}" data-err-future="Ngày chụp không thể là một ngày trong tương lai." autofocus>
 				</div>
 				<input type="submit" value="OK" class="w3-button w3-light-gray">
-				<div class="w3-button w3-light-gray __close">Hủy</div>
+				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
 			$0.date
@@ -541,10 +594,12 @@ let Modal = {
 					<input type="text" name="location" class="w3-input w3-border __location" value="${text(album.location)}" autofocus>
 				</div>
 				<input type="submit" value="OK" class="w3-button w3-light-gray">
-				<div class="w3-button w3-light-gray __close">Hủy</div>
+				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
 			$0.location.select();
+
+			new google.maps.places.Autocomplete($0.location[0]);
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -572,14 +627,14 @@ let Modal = {
 				$.post("php/deleteAlbum.php", {
 					id: album.id
 				}, err => {
+					$1.fn.close();
+
 					if (err) {
 						Modal.alert(err);
 					}
 					else {
 						callback(album);
 					}
-
-					$1.fn.close();
 				});
 			});
 		});
@@ -594,7 +649,7 @@ let Modal = {
 					<span class="w3-col s2 w3-padding">.${img.type}</span>
 				</div>
 				<input type="submit" value="OK" class="w3-button w3-light-gray">
-				<div class="w3-button w3-light-gray __close">Hủy</div>
+				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
 			$0.name
@@ -683,14 +738,14 @@ let Modal = {
 				$.post("php/deleteImg.php", {
 					id: img.id
 				}, err => {
+					$1.fn.close();
+
 					if (err) {
 						Modal.alert(err);
 					}
 					else {
 						callback(img);
 					}
-
-					$1.fn.close();
 				});
 			});
 		});
@@ -726,7 +781,7 @@ let Modal = {
 								<a class="__download">
 									<img class="w3-bar-item w3-button w3-hover-dark-gray" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
 								</a>
-								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Xem toàn màn hình">
+								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Bật/tắt toàn màn hình">
 								<img class="w3-bar-item w3-button w3-hover-red __close" src="https://png.icons8.com/material/24/ffffff/delete-sign.png" title="Đóng">
 							</div>
 						</div>
@@ -742,254 +797,269 @@ let Modal = {
 
 			$0.modalHeader.hide();
 
-			$0.img
-				.css({
-					width: "100%",
-					height: "100%",
-					objectFit: "scale-down"
-				});
+			if (img.status == 1) {
+				$0.img
+					.css({
+						width: "100%",
+						height: "100%",
+						objectFit: "scale-down"
+					});
 
-			$0.img1
-				.css({
-					cursor: "zoom-in"
-				})
-				.hammer()
-				.on("tap", function(event) {
-					if (this.naturalWidth > this.width || this.naturalHeight > this.height) {
-						if ($0.img1.css("objectFit") === "none") {
-							$0.img1.css({
-								objectFit: "scale-down",
-								objectPosition: "initial",
-								cursor: "zoom-in"
-							});
-						}
-						else {
-							fitX = Math.round(this.naturalWidth / 2 - this.width / 2);
-							fitY = Math.round(this.naturalHeight / 2 - this.height / 2);
-
-							$0.img1.css({
-								objectFit: "none",
-								objectPosition: `${-fitX}px ${-fitY}px`,
-								cursor: "zoom-out"
-							});
-						}
-					}
-				});
-
-			$0.view
-				.mousemove(function(event) {
-					if (event.target === $0.view[0] || event.target === $0.img[1]) {
-						if ($0.tools.css("display") === "none") {
-							if (
-								Math.max(
-									Math.abs(event.originalEvent.movementX),
-									Math.abs(event.originalEvent.movementY)
-								) > 5
-							) {
-								$0.tools
-									.finish()
-									.show()
-									.delay(1000)
-									.fadeOut(200);
-							}
-						}
-						else {
-							if (
-								Math.max(
-									Math.abs(event.originalEvent.movementX),
-									Math.abs(event.originalEvent.movementY)
-								) > 5
-							) {
-								$0.tools
-									.finish()
-									.show()
-									.delay(1000)
-									.fadeOut(200);
+				$0.img1
+					.css({
+						cursor: "zoom-in"
+					})
+					.hammer()
+					.on("tap", function(event) {
+						if (this.naturalWidth > this.width || this.naturalHeight > this.height) {
+							if ($0.img1.css("objectFit") === "none") {
+								$0.img1.css({
+									objectFit: "scale-down",
+									objectPosition: "initial",
+									cursor: "zoom-in"
+								});
 							}
 							else {
-								if ($0.tools.data("hoverTools")) {
+								fitX = Math.round(this.naturalWidth / 2 - this.width / 2);
+								fitY = Math.round(this.naturalHeight / 2 - this.height / 2);
+
+								$0.img1.css({
+									objectFit: "none",
+									objectPosition: `${-fitX}px ${-fitY}px`,
+									cursor: "zoom-out"
+								});
+							}
+						}
+					});
+
+				$0.view
+					.mousemove(function(event) {
+						if (event.target === $0.view[0] || event.target === $0.img[1]) {
+							if ($0.tools.css("display") === "none") {
+								if (
+									Math.max(
+										Math.abs(event.originalEvent.movementX),
+										Math.abs(event.originalEvent.movementY)
+									) > 5
+								) {
 									$0.tools
 										.finish()
 										.show()
 										.delay(1000)
-										.fadeOut(200)
-										.removeData("hoverTools");
+										.fadeOut(200);
+								}
+							}
+							else {
+								if (
+									Math.max(
+										Math.abs(event.originalEvent.movementX),
+										Math.abs(event.originalEvent.movementY)
+									) > 5
+								) {
+									$0.tools
+										.finish()
+										.show()
+										.delay(1000)
+										.fadeOut(200);
+								}
+								else {
+									if ($0.tools.data("hoverTools")) {
+										$0.tools
+											.finish()
+											.show()
+											.delay(1000)
+											.fadeOut(200)
+											.removeData("hoverTools");
+									}
 								}
 							}
 						}
-					}
-					else {
-						$0.tools
-							.finish()
-							.show()
-							.data("hoverTools", true);
-					}
-				})
-				.hammer()
-				.on("panstart", event => {
-					fitX0 = fitX;
-					fitY0 = fitY;
-
-					$0.img1.css({
-						cursor: "-webkit-grab"
-					});
-				})
-				.on("pan", event => {
-					if ($0.img1.css("objectFit") === "none") {
-						let img1 = $0.img1[0];
-
-						fitX = fitX0;
-						fitY = fitY0;
-
-						if (img1.naturalWidth > img1.width) {
-							fitX -= event.gesture.deltaX;
-
-							if (fitX < 0) {
-								fitX = 0;
-							}
-							else if (fitX > img1.naturalWidth - img1.width) {
-								fitX = img1.naturalWidth - img1.width;
-							}
+						else {
+							$0.tools
+								.finish()
+								.show()
+								.data("hoverTools", true);
 						}
-						if (img1.naturalHeight > img1.height) {
-							fitY -= event.gesture.deltaY;
-
-							if (fitY < 0) {
-								fitY = 0;
-							}
-							else if (fitY > img1.naturalHeight - img1.height) {
-								fitY = img1.naturalHeight - img1.height;
-							}
-						}
+					})
+					.hammer()
+					.on("panstart", event => {
+						fitX0 = fitX;
+						fitY0 = fitY;
 
 						$0.img1.css({
-							objectPosition: `${-fitX}px ${-fitY}px`,
-							cursor: "-webkit-grabbing"
+							cursor: "-webkit-grab"
 						});
-					}
-				})
-				.on("panend", event => {
-					$0.img1.css({
-						cursor: $0.img1.css("objectFit") === "none" ? "zoom-out" : "zoom-in"
-					});
-				});
+					})
+					.on("pan", event => {
+						if ($0.img1.css("objectFit") === "none") {
+							let img1 = $0.img1[0];
 
-			$0.tools
-				.delay(1000)
-				.fadeOut(200);
+							fitX = fitX0;
+							fitY = fitY0;
 
-			$0.fullscreen
-				.click(event => {
-					if (document.webkitIsFullScreen) {
-						document.webkitExitFullscreen();
-					}
-					else {
-						$0.view[0].webkitRequestFullscreen();
-					}
-				});
+							if (img1.naturalWidth > img1.width) {
+								fitX -= event.gesture.deltaX;
 
-			load(img);
+								if (fitX < 0) {
+									fitX = 0;
+								}
+								else if (fitX > img1.naturalWidth - img1.width) {
+									fitX = img1.naturalWidth - img1.width;
+								}
+							}
+							if (img1.naturalHeight > img1.height) {
+								fitY -= event.gesture.deltaY;
 
-			function load(img, nav) {
-				let prev, next, findIndex;
+								if (fitY < 0) {
+									fitY = 0;
+								}
+								else if (fitY > img1.naturalHeight - img1.height) {
+									fitY = img1.naturalHeight - img1.height;
+								}
+							}
 
-				findIndex = album.imgs.findIndex(v => v.id === img.id);
-				prev = album.imgs[findIndex - 1];
-				next = album.imgs[findIndex + 1];
-
-				if (album.num_img < len || (next && prev)) {
-					render(nav, prev, img, next, findIndex);
-				}
-				else {
-					$.getJSON("php/getImg.php", {
-						id: img.id,
-						album_id: album.id
-					}, args => {
-						if (args) {
-							render(nav, ...args);
+							$0.img1.css({
+								objectPosition: `${-fitX}px ${-fitY}px`,
+								cursor: "-webkit-grabbing"
+							});
 						}
-					});
-				}
-			}
-
-			function render(nav, prev, img, next, index) {
-				let imgUrl;
-
-				imgUrl = `img/upload/${img.id}.${img.type}`;
-
-				$0.name
-					.text(img.name)
-					.prop("title", img.name);
-
-				$0.imgIndex.text((index + 1) + " / " + album.num_img);
-
-				$0.download.prop({
-					href: imgUrl,
-					download: `${img.id}.${img.type}`
-				});
-
-				$0.prev
-					.add($0.next)
-					.off("click")
-					.prop("disabled", true)
-					.addClass("w3-disabled");
-
-				$0.img2
-					.prop("src", imgUrl)
-					.velocity("finish")
-					.velocity({
-						left: [0, nav * 100 + "%"]
-					}, 400, e => {
-						$(e)
-							.removeProp("src")
-							.css("left", nav * 100 + "%");
+					})
+					.on("panend", event => {
+						$0.img1.css({
+							cursor: $0.img1.css("objectFit") === "none" ? "zoom-out" : "zoom-in"
+						});
 					});
 
-				$0.img1
-					.velocity("finish")
-					.velocity({
-						left: [nav * -100 + "%", 0]
-					}, 400, e => {
-						$(e)
-							.show()
-							.prop("src", imgUrl)
-							.css({
-								left: 0,
+				$0.tools
+					.delay(1000)
+					.fadeOut(200);
+
+				$0.fullscreen
+					.click(event => {
+						if (document.webkitIsFullScreen) {
+							document.webkitExitFullscreen();
+						}
+						else {
+							$0.view[0].webkitRequestFullscreen();
+
+							$0.img1.css({
 								objectFit: "scale-down",
 								objectPosition: "initial",
 								cursor: "zoom-in"
 							});
+						}
 					});
 
-				if (prev) {
+				load(img);
+
+				function load(img, nav) {
+					let prev, next, findIndex;
+
+					findIndex = album.imgs.findIndex(v => v.id === img.id);
+					prev = album.imgs[findIndex - 1];
+					next = album.imgs[findIndex + 1];
+
+					if (album.num_img < len || (next && prev)) {
+						render(nav, prev, img, next, findIndex);
+					}
+					else {
+						$.getJSON("php/getImg.php", {
+							id: img.id,
+							album_id: album.id
+						}, args => {
+							if (args) {
+								render(nav, ...args);
+							}
+						});
+					}
+				}
+
+				function render(nav, prev, img, next, index) {
+					let imgUrl;
+
+					imgUrl = `img/upload/${img.id}.${img.type}`;
+
+					$0.name
+						.text(img.name)
+						.prop("title", img.name);
+
+					$0.imgIndex.text((index + 1) + " / " + album.num_img);
+
+					$0.download.prop({
+						href: imgUrl,
+						download: `${img.id}.${img.type}`
+					});
+
 					$0.prev
-						.click(event => {
-							load(prev, -1);
+						.add($0.next)
+						.off("click")
+						.prop("disabled", true)
+						.addClass("w3-disabled");
 
-							$0.tools
-								.finish()
+					$0.img2
+						.prop("src", imgUrl)
+						.velocity("finish")
+						.velocity({
+							left: [0, nav * 100 + "%"]
+						}, 400, e => {
+							$(e)
+								.removeProp("src")
+								.css("left", nav * 100 + "%");
+						});
+
+					$0.img1
+						.velocity("finish")
+						.velocity({
+							left: [nav * -100 + "%", 0]
+						}, 400, e => {
+							$(e)
 								.show()
-								.delay(1000)
-								.fadeOut(200);
-						})
-						.prop("disabled", false)
-						.removeClass("w3-disabled");
-				}
+								.prop("src", imgUrl)
+								.css({
+									left: 0,
+									objectFit: "scale-down",
+									objectPosition: "initial",
+									cursor: "zoom-in"
+								});
+						});
 
-				if (next) {
-					$0.next
-						.click(event => {
-							load(next, 1);
+					if (prev) {
+						$0.prev
+							.click(event => {
+								load(prev, -1);
 
-							$0.tools
-								.finish()
-								.show()
-								.delay(1000)
-								.fadeOut(200);
-						})
-						.prop("disabled", false)
-						.removeClass("w3-disabled");
+								$0.tools
+									.finish()
+									.show()
+									.delay(1000)
+									.fadeOut(200);
+							})
+							.prop("disabled", false)
+							.removeClass("w3-disabled");
+					}
+
+					if (next) {
+						$0.next
+							.click(event => {
+								load(next, 1);
+
+								$0.tools
+									.finish()
+									.show()
+									.delay(1000)
+									.fadeOut(200);
+							})
+							.prop("disabled", false)
+							.removeClass("w3-disabled");
+					}
 				}
+			}
+			else {
+				$0.img.hide();
+
+				$0.view.append(`
+					<div class="w3-display-middle w3-text-gray w3-large">Ảnh này hiện đã bị xóa</div>
+				`);
 			}
 		});
 	},

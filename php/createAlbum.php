@@ -2,8 +2,10 @@
 require 'util.php';
 
 $name = trim($_POST['name']);
-$date = $_POST['date'];
-$location = $_POST['location'];
+$date = isset($_POST['date']) ? $_POST['date'] : '';
+$location = isset($_POST['location']) ? $_POST['location'] : '';
+
+$con->begin_transaction();
 
 if (
 	$meId &&
@@ -24,28 +26,67 @@ if (
 			die('Tên album đã tồn tại.');
 		}
 		else {
-			$now = date('Y-m-d H:i:s');
+			$date = date("Y-m-d");
+			$time = date("H:i:s");
+			$datetime = "$date $time";
 
 			$stm = $con->prepare("
-				INSERT INTO albums (name, date, location, date_created,
-					date_last_upload, user_id, status)
+				INSERT INTO albums (
+					name,
+					date,
+					location,
+					date_created,
+					date_last_upload,
+					user_id,
+					status
+				)
 				VALUES (?, ?, ?, ?, ?, ?, 1)
 			");
-			$stm->bind_param('sssssi', $name, $date, $location, $now, $now, $meId);
+			$stm->bind_param(
+				'sssssi',
+				$name,
+				$date,
+				$location,
+				$datetime,
+				$datetime,
+				$meId
+			);
 
 			if ($stm->execute()) {
 				$insert_id = $con->insert_id;
 
-				echo $insert_id;
-			}
-			else {
-				die('Thêm album thất bại.');
+				$stm = $con->prepare("
+					INSERT INTO histories_create_album (
+						user_id,
+						album_id,
+						album_name,
+						date,
+						time
+					)
+					VALUES (?, ?, ?, ?, ?)
+				");
+				$stm->bind_param(
+					'iisss',
+					$meId,
+					$insert_id,
+					$name,
+					$date,
+					$time
+				);
+
+				if ($stm->execute()) {
+					$con->commit();
+					echo $insert_id;
+					exit;
+				}
 			}
 		}
 	}
-	else {
-		die('Đã xảy ra lỗi, hãy thử lại.');
-	}
+
+	$stm->close();
 }
+
+$con->rollback();
+die('Thêm album thất bại.');
 
 $con->close();

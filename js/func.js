@@ -94,7 +94,7 @@ function getAlbum({
 								.text(img.name);
 
 						imgElm = new Image;
-						imgElm.src = `img/upload/${img.id}.${img.type}`;
+						imgElm.src = `thumb.php?id=${img.id}&type=${img.type}`;
 
 						imgElm.onload = event => {
 							$img
@@ -174,6 +174,7 @@ function getAlbums({
 	elm,
 	click = () => {},
 	dblclick = () => {},
+	/* view, select */
 	mode = "view",
 	selectedId,
 	removeId,
@@ -242,9 +243,10 @@ function getAlbums({
 							.click(function(event) {
 								if (!event.target.classList.contains("editBtn")) {
 									switch (mode) {
-
 										case "view":
-											location.href = `?view=album&id=${album.id}`;
+											if (event.originalEvent && event.originalEvent.isTrusted) {
+												location.href = `?view=album&id=${album.id}`;
+											}
 											break;
 
 										case "select":
@@ -270,15 +272,15 @@ function getAlbums({
 
 										$(this)
 											.find(".img")
-											.prop("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
-											.one("load", function(event) {
-												$(this)
-													.removeClass("w3-animate-opacity")
-													.show()
-													.addClass("w3-animate-opacity");
+												.prop("src", `thumb.php?id=${album.imgs[hoverImg].id}&type=${album.imgs[hoverImg].type}`)
+												.one("load", function(event) {
+													$(this)
+														.removeClass("w3-animate-opacity")
+														.show()
+														.addClass("w3-animate-opacity");
 
-												timeout = setTimeout(hover, 2000);
-											});
+													timeout = setTimeout(hover, 2000);
+												});
 
 										clearTimeout(timeout);
 									};
@@ -292,8 +294,8 @@ function getAlbums({
 								if (album.imgs.length > 1) {
 									$(this)
 										.find(".img")
-										.attr("src", `img/upload/${album.imgs[hoverImg].id}.${album.imgs[hoverImg].type}`)
-										.velocity("finish");
+											.attr("src", `thumb.php?id=${album.imgs[hoverImg].id}&type=${album.imgs[hoverImg].type}`)
+											.velocity("finish");
 								}
 
 								$album.find(".w3-dropdown-content").hide();
@@ -301,8 +303,8 @@ function getAlbums({
 						.find(".img")
 							.prop("src",
 								album.imgs.length ?
-								`img/upload/${album.imgs[0].id}.${album.imgs[0].type}` :
-								"https://png.icons8.com/office/80/picture.png"
+								`thumb.php?id=${album.imgs[0].id}&type=${album.imgs[0].type}` :
+								"img/img.png"
 							)
 							.on("load", function() {
 								$album.show();
@@ -587,7 +589,7 @@ function modal(title = "", css = "auto", html = "", js) {
 
 function active(elm, lv, hasClass, addClass, removeClass) {
 	elm["@removeClass"] = removeClass;
-	hasClass = "." + hasClass.replace(/\s(.)/g, " .$1");
+	hasClass = hasClass ? "." + hasClass.replace(/\s(.)/g, " .$1") : "";
 
 	if (lv) {
 		$(elm)

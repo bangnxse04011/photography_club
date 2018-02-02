@@ -1,12 +1,11 @@
-<?php
-require 'php/util.php';
-?>
+<?php require 'php/util.php' ?>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-	<meta charset="utf-8">
 	<title>Photography Club</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&amp;subset=latin-ext,vietnamese" rel="stylesheet">
@@ -15,7 +14,7 @@ require 'php/util.php';
 	<link rel="stylesheet" href="css/<?php echo $view ?>.css">
 	<?php } ?>
 
-	<link rel="prefetch" href="https://png.icons8.com/office/80/picture.png">
+	<link rel="prefetch" href="img/img.png">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.min.js"></script>
@@ -30,7 +29,7 @@ require 'php/util.php';
 
 			<?php
 			require 'js/init.php';
-			require 'js/social.js';
+			// require 'js/social.js';
 			require 'js/func.js';
 			require 'js/modal.js';
 			require 'js/script.js';
@@ -42,14 +41,14 @@ require 'php/util.php';
 		});
 	</script>
 </head>
-<body class="w3-light-gray">
+<body>
 	<?php require 'html/header.php' ?>
 
-	<div id="section">
+	<div id="section" style="visibility:hidden">
 		<?php require 'html/sidebar.php' ?>
 
 		<div id="main">
-			<?php require "html/$view.php" ?>
+			<?php require file_exists("html/$view.php") ? "html/$view.php" : "html/404.php" ?>
 		</div>
 	</div>
 

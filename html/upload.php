@@ -20,14 +20,19 @@
 
 				if ($album_id > 0) {
 					$stm = $con->prepare("
-						SELECT count(*) FROM albums
+						SELECT * FROM albums
 						WHERE id=? AND user_id=? AND status=1
 					");
 					$stm->bind_param('ii', $album_id, $meId);
 					$stm->execute();
 
 					if ($rs = $stm->get_result()) {
-						if ($rs->fetch_row()[0]) {
+						if ($album = $rs->fetch_assoc()) {
+							$album_name = $album['name'];
+							$date = date('Y-m-d');
+							$time = date('H:i:s');
+							$datetime = "$date $time";
+
 							if ($files['name'][0]) {
 								for ($i = 0; $i < count($files['name']); $i++) {
 									$isSuccess = FALSE;
@@ -38,7 +43,6 @@
 												$pathinfo = pathinfo($files['name'][$i]);
 
 												$name = $pathinfo['filename'];
-												$now = date('Y-m-d H:i:s');
 												$type = $pathinfo['extension'];
 
 												$con->begin_transaction();
@@ -47,29 +51,41 @@
 													INSERT INTO imgs (name, album_id, date_upload, type)
 													VALUES (?, ?, ?, ?)
 												");
-												$stm->bind_param('siss', $name, $album_id, $now, $type);
+												$stm->bind_param('siss', $name, $album_id, $datetime, $type);
 
 												if ($stm->execute()) {
 													$insert_id = $con->insert_id;
-													$date_last_upload = date('Y-m-d H:i:s');
 
 													$stm = $con->prepare("
 														UPDATE albums
 														SET date_last_upload=?
 														WHERE id=?
 													");
-													$stm->bind_param('si', $date_last_upload, $album_id);
+													$stm->bind_param('si', $datetime, $album_id);
 
 													if ($stm->execute()) {
-														$act = 'upload';
-														$date = date('Y-m-d H:i:s');
-														$time = date('H:i:s');
-
 														$stm = $con->prepare("
-															INSERT INTO histories (user_id, act, album_id, img_id, date, time)
-															VALUES (?, ?, ?, ?, ?, ?)
+															INSERT INTO histories_upload (
+																user_id,
+																album_id,
+																album_name,
+																img_id,
+																img_name,
+																date,
+																time
+															)
+															VALUES (?, ?, ?, ?, ?, ?, ?)
 														");
-														$stm->bind_param('isiiss', $meId, $act, $album_id, $insert_id, $date, $time);
+														$stm->bind_param(
+															'iisisss',
+															$meId,
+															$album_id,
+															$album_name,
+															$insert_id,
+															$name,
+															$date,
+															$time
+														);
 
 														if ($stm->execute()) {
 															if (move_uploaded_file(
@@ -135,7 +151,6 @@
 
 												if (preg_match('/^png|jpg|jpeg|gif$/', $type)) {
 													if ($size <= 1024 * 1024 * 25) {
-														$now = date('Y-m-d H:i:s');
 														$content = zip_entry_read($zip_entry, $size);
 
 														$con->begin_transaction();
@@ -144,29 +159,41 @@
 															INSERT INTO imgs (name, album_id, date_upload, type)
 															VALUES (?, ?, ?, ?)
 														");
-														$stm->bind_param('siss', $name, $album_id, $now, $type);
+														$stm->bind_param('siss', $name, $album_id, $datetime, $type);
 
 														if ($stm->execute()) {
 															$insert_id = $con->insert_id;
-															$date_last_upload = date('Y-m-d H:i:s');
 
 															$stm = $con->prepare("
 																UPDATE albums
 																SET date_last_upload=?
 																WHERE id=?
 															");
-															$stm->bind_param('si', $date_last_upload, $album_id);
+															$stm->bind_param('si', $datetime, $album_id);
 
 															if ($stm->execute()) {
-																$act = 'upload';
-																$date = date('Y-m-d');
-																$time = date('H:i:s');
-
 																$stm = $con->prepare("
-																	INSERT INTO histories (user_id, act, album_id, img_id, date, time)
-																	VALUES (?, ?, ?, ?, ?, ?)
+																	INSERT INTO histories_upload (
+																		user_id,
+																		album_id,
+																		album_name,
+																		img_id,
+																		img_name,
+																		date,
+																		time
+																	)
+																	VALUES (?, ?, ?, ?, ?, ?, ?)
 																");
-																$stm->bind_param('isiiss', $meId, $act, $album_id, $insert_id, $date, $time);
+																$stm->bind_param(
+																	'iisisss',
+																	$meId,
+																	$album_id,
+																	$album_name,
+																	$insert_id,
+																	$name,
+																	$date,
+																	$time
+																);
 
 																if ($stm->execute()) {
 																	if (file_put_contents("$upload_dir/$insert_id.$type", $content)) {

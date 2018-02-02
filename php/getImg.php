@@ -10,7 +10,11 @@ $next = null;
 $index = -1;
 
 if ($id > 0) {
-	$stm = $con->prepare("SELECT * FROM imgs WHERE album_id=?");
+	$stm = $con->prepare("
+		SELECT *
+		FROM imgs
+		WHERE album_id=? AND status=1
+	");
 	$stm->bind_param('i', $album_id);
 	$stm->execute();
 

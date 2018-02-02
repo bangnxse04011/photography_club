@@ -3,13 +3,12 @@ require 'util.php';
 
 $start = isset($_GET['start']) ? +$_GET['start'] : 0;
 $len = isset($_GET['len']) ? +$_GET['len'] : 20;
-$rand = isset($_GET['rand']) ? +$_GET['rand'] : 0;
+$rand = isset($_GET['rand']) ? ($_GET['rand'] == 'true' ? 1 : 0) : 0;
 $user_id = isset($_GET['user_id']) ? +$_GET['user_id'] : $meId;
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 $albums = [];
 $num = 0;
-
 $order_by = $rand ? 'ORDER BY rand()' : '';
 
 if ($user_id === -1) {

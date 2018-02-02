@@ -1,6 +1,7 @@
 body {
 	height: 0;
 	font-family: 'Noto Sans', sans-serif;
+	background: #fafafa;
 }
 hr {
 	border-top: solid 1px #ccc;
