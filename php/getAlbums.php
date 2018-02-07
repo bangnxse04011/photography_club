@@ -9,32 +9,51 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 $albums = [];
 $num = 0;
+
 $order_by = $rand ? 'ORDER BY rand()' : '';
 
 if ($user_id === -1) {
-	$where_user_id = "albums.user_id!=$meId";
+	$where_user_id = "a.user_id!=$meId";
 }
 else if ($user_id === 0) {
 	$where_user_id = '1=1';
 }
 else {
-	$where_user_id = "albums.user_id=$user_id";
+	$where_user_id = "a.user_id=$user_id";
 }
-
-$search = "%$search%";
 
 $tmp = $start * $len;
 
-$stm = $con->prepare("
-	SELECT albums.*, users.name user_name
-	FROM albums
-	JOIN users
-	ON albums.user_id=users.id
-	WHERE $where_user_id AND albums.name LIKE ? AND albums.status=1
-	$order_by
-	LIMIT ?, ?
-");
-$stm->bind_param('sii', $search, $tmp, $len);
+if ($search) {
+	$search =  strtolatin(mb_strtolower($search));
+
+	$stm = $con->prepare("
+		SELECT
+			a.*,
+			u.name user_name,
+			0 is_like
+		FROM albums a
+		JOIN users u
+		ON a.user_id=u.id
+		WHERE $where_user_id
+			AND a.status=1
+	");
+}
+else {
+	$stm = $con->prepare("
+		SELECT
+			a.*,
+			u.name user_name
+		FROM albums a
+		JOIN users u
+		ON a.user_id=u.id
+		WHERE $where_user_id AND a.status=1
+		$order_by
+		LIMIT ?, ?
+	");
+	$stm->bind_param('ii', $tmp, $len);
+}
+
 $stm->execute();
 
 if ($rs = $stm->get_result()) {
@@ -70,14 +89,55 @@ if ($rs = $stm->get_result()) {
 			}
 		}
 
+		if ($search) {
+			$album['distance'] = similar_text(strtolatin(mb_strtolower($album['name'])), $search);
+		}
+
 		$albums[] = $album;
 	}
 }
 
-$query = "SELECT count(*) FROM albums WHERE $where_user_id AND status=1";
+if ($search) {
+	$fltLike = [];
+	$fltDistance = [];
 
-if ($rs = $con->query($query)) {
-	$num = $rs->fetch_row()[0];
+	foreach ($albums as $k => $v) {
+		if (preg_match("/\b$search\b/", strtolatin(mb_strtolower($v['name'])))) {
+			$fltLike[] = $v;
+		}
+		else {
+			$fltDistance[] = $v;
+		}
+	}
+
+	$fltDistance = array_filter($fltDistance, function($album) {
+		return $album['distance'] > 0;
+	});
+
+	$albums = array_merge($fltLike, $fltDistance);
+
+	uasort($albums, function($a, $b) {
+		global $search;
+
+		if (
+			$a['is_like'] > $a['is_like'] ||
+			$a['distance'] < $b['distance']
+		) {
+			return 1;
+		}
+		return -1;
+	});
+
+	$albums = array_slice($albums, $start, $len);
+
+	$num = count($albums);
+}
+else {
+	$query = "SELECT count(*) FROM albums WHERE $where_user_id AND status=1";
+
+	if ($rs = $con->query($query)) {
+		$num = $rs->fetch_row()[0];
+	}
 }
 
 echo json_encode([$albums, $num]);
