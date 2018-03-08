@@ -50,7 +50,7 @@ let Modal = {
 			$0.loader.css({
 				width: 72,
 				height: 72,
-				border: "solid 8px #ccc",
+				border: "solid 11px #ccc",
 				borderTopColor: "#03a9f4",
 				borderRadius: "50%",
 				display: "inline-block"
@@ -170,6 +170,83 @@ let Modal = {
 					else {
 						location.href = "";
 					}
+				});
+			});
+		});
+	},
+
+	payIn() {
+		return modal("Nạp tiền vào tài khoản", 400, `
+			<div class="w3-padding __payInMethod">
+				<p><b>Vui lòng chọn phương thức nạp tiền: </b></p>
+				<div class="w3-row w3-center w3-margin-bottom">
+					<div class="w3-col s6 w3-padding-small">
+						<button type="button" class="w3-button w3-block w3-light-gray __btnBankCard">Thẻ ngân hàng</button>
+					</div>
+					<div class="w3-col s6 w3-padding-small">
+						<button type="button" class="w3-button w3-block w3-light-gray __btnPhoneCard">Thẻ điện thoại</button>
+					</div>
+				</div>
+				<div class="w3-text-dark-gray __payInMethodInfo" style="padding:0 8px"></div>
+			</div>
+			<div class="__bankCard">
+				<div class="w3-light-gray">
+					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
+				</div>
+			</div>
+			<div class="__phoneCard">
+				<div class="w3-light-gray">
+					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
+				</div>
+				<form class="w3-padding __formPhoneCard">
+					<div class="w3-section">
+						<label class="w3-text-teal">Nhập mã thẻ cào điện thoại: </label>
+						<input type="text" name="code" class="w3-input w3-border" required>
+					</div>
+					<input type="submit" class="w3-button w3-light-gray" value="OK">
+					<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
+				</form>
+			</div>
+		`, $0 => {
+			$0.bankCard.hide();
+			$0.phoneCard.hide();
+			$0.payInMethodInfo.hide();
+
+			$0.btnBankCard
+				.click(() => {
+					$0.payInMethod.hide();
+					$0.bankCard.show();
+					$0.phoneCard.hide();
+				})
+				.hover(() => {
+					$0.payInMethodInfo.finish().text("Vietcombank, Agribank").show(200);
+				}, () => {
+					$0.payInMethodInfo.finish().hide(200).empty();
+				});
+
+			$0.btnPhoneCard
+				.click(() => {
+					$0.payInMethod.hide();
+					$0.bankCard.hide();
+					$0.phoneCard.show();
+				})
+				.hover(() => {
+					$0.payInMethodInfo.finish().text("Viettel, MobiFone, VinaPhone").show(200);
+				}, () => {
+					$0.payInMethodInfo.finish().hide(200).empty();
+				});
+
+			$0.btnBack.click(() => {
+				$0.payInMethod.show();
+				$0.bankCard.hide();
+				$0.phoneCard.hide();
+			});
+
+			$0.formPhoneCard.submit(function(event) {
+				event.preventDefault();
+
+				Modal.wait(undefined, $0 => {
+					// Code here...
 				});
 			});
 		});
@@ -732,6 +809,21 @@ let Modal = {
 		});
 	},
 
+	downloadImg(img, callback) {
+		if (meId) {
+			let a;
+
+			a = document.createElement("a");
+			a.href = `img/upload/${img.id}.${img.type}`;
+			a.download = `${img.name}_${img.id}.${img.type}`;
+
+			a.click();
+		}
+		else {
+			Modal.login();
+		}
+	},
+
 	deleteImg(img, callback) {
 		Modal.confirm("Bạn chắc chắn muốn xóa?", () => {
 			Modal.wait(undefined, $1 => {
@@ -778,9 +870,7 @@ let Modal = {
 						</div>
 						<div class="w3-col s5">
 							<div class="w3-right">
-								<a class="__download">
-									<img class="w3-bar-item w3-button w3-hover-dark-gray" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
-								</a>
+								<img class="w3-bar-item w3-button w3-hover-dark-gray __download" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
 								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Bật/tắt toàn màn hình">
 								<img class="w3-bar-item w3-button w3-hover-red __close" src="https://png.icons8.com/material/24/ffffff/delete-sign.png" title="Đóng">
 							</div>
@@ -985,10 +1075,11 @@ let Modal = {
 
 					$0.imgIndex.text((index + 1) + " / " + album.num_img);
 
-					$0.download.prop({
-						href: imgUrl,
-						download: `${img.id}.${img.type}`
-					});
+					$0.download
+						.off("click")
+						.click(() => {
+							Modal.downloadImg(img);
+						});
 
 					$0.prev
 						.add($0.next)

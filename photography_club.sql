@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 04, 2018 at 01:57 AM
+-- Generation Time: Mar 08, 2018 at 11:18 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -357,6 +357,7 @@ CREATE TABLE `users` (
   `last_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `date_created` date NOT NULL,
+  `money` int(11) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -364,10 +365,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `pass`, `first_name`, `last_name`, `email`, `date_created`, `status`) VALUES
-(1, 'tiencoffee', 'b656ee4eb330f88c08554ad0395846a3', 'Trần Quang', 'Tiến', 'tiencoffee4@gmail.com', '2018-01-13', 1),
-(2, 'barack-obama', 'bf166701e09be1ddc752dc4f7ad123d4', 'Barack', 'Obama', '', '2018-01-14', 1),
-(3, '742Cutiefly', '9fa57a07946b9eb4f1ffd333a87d5366', 'Cutie', 'Fly', 'cutiefly742@yahoo.com', '2018-01-30', 1);
+INSERT INTO `users` (`id`, `name`, `pass`, `first_name`, `last_name`, `email`, `date_created`, `money`, `status`) VALUES
+(1, 'tiencoffee', 'b656ee4eb330f88c08554ad0395846a3', 'Trần Quang', 'Tiến', 'tiencoffee4@gmail.com', '2018-01-13', 0, 1),
+(2, 'barack-obama', 'bf166701e09be1ddc752dc4f7ad123d4', 'Barack', 'Obama', '', '2018-01-14', 0, 1),
+(3, '742Cutiefly', '9fa57a07946b9eb4f1ffd333a87d5366', 'Cutie', 'Fly', 'cutiefly742@yahoo.com', '2018-01-30', 0, 1);
 
 -- --------------------------------------------------------
 

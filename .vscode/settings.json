@@ -1,2 +1,7 @@
 {
+	"editor.fontFamily": "Source Code Variable",
+	"editor.tabSize": 2,
+	"editor.fontSize": 18,
+	"editor.wordWrap": "on",
+	"editor.smoothScrolling": true
 }

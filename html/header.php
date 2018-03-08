@@ -25,16 +25,24 @@
 							<div class="w3-small w3-text-gray"><?php echo "$me[name]"?></div>
 						</div>
 					</div>
+					<a href="?view=profile" class="w3-bar-item w3-button w3-hover-light-gray">
+						<img src="https://png.icons8.com/windows/24/stack-of-photos.png">
+						<span class="w3-margin-left">Thông tin tài khoản</span>
+					</a>
 					<a href="?view=myAlbums" class="w3-bar-item w3-button w3-hover-light-gray">
-						<img src="https://png.icons8.com/windows/24/000000/stack-of-photos.png">
+						<img src="https://png.icons8.com/windows/24/stack-of-photos.png">
 						<span class="w3-margin-left">Album ảnh</span>
 					</a>
+					<a href="javascript:" class="w3-bar-item w3-button w3-hover-light-gray btnPayIn">
+						<img src="https://png.icons8.com/windows/24/money.png">
+						<span class="w3-margin-left">Nạp tiền</span>
+					</a>
 					<a href="javascript:" class="w3-bar-item w3-button w3-hover-light-gray btnChangePass">
-						<img src="https://png.icons8.com/windows/24/000000/password.png">
+						<img src="https://png.icons8.com/windows/24/password.png">
 						<span class="w3-margin-left">Đổi mật khẩu</span>
 					</a>
 					<a href="php/logout.php" class="w3-bar-item w3-button w3-hover-light-gray">
-						<img src="https://png.icons8.com/windows/24/000000/exit.png">
+						<img src="https://png.icons8.com/windows/24/exit.png">
 						<span class="w3-margin-left">Đăng xuất</span>
 					</a>
 				</div>

@@ -31,8 +31,8 @@ if (!$meId) {
 
 				$stm = $con->prepare("
 					INSERT INTO users (name, pass, first_name, last_name,
-						email, date_created, status)
-					VALUES (?, ?, ?, ?, ?, ?, 1)
+						email, date_created, money, status)
+					VALUES (?, ?, ?, ?, ?, ?, 0, 1)
 				");
 				$stm->bind_param(
 					'ssssss',

@@ -60,7 +60,7 @@ function getAlbum({
 											<div class="w3-bar-item w3-button editBtn renameImg">Đổi tên</div>
 											<div class="w3-bar-item w3-button editBtn copyImg">Sao chép</div>
 											<div class="w3-bar-item w3-button editBtn moveImg">Di chuyển</div>
-											<a class="w3-bar-item w3-button editBtn downloadImg">Tải xuống</a>
+											<div class="w3-bar-item w3-button editBtn downloadImg">Tải xuống</div>
 											<div class="w3-bar-item w3-button editBtn deleteImg">Xóa</div>
 										</div>
 									</div>
@@ -107,54 +107,52 @@ function getAlbum({
 									});
 						};
 
-						if (album.user_id === meId) {
-							$img
-								.find(".renameImg")
-									.click(() => {
-										Modal.renameImg(img, name => {
-											img.name = name;
-											$img.find(".name").text(name);
-										});
-									})
-									.end()
-								.find(".copyImg")
-									.click(() => {
-										Modal.copyImg(img, newImg => {
-											if (newImg) {
-												load(newImg.id);
-											}
-										});
-									})
-									.end()
-								.find(".moveImg")
-									.click(() => {
-										Modal.moveImg(img, err => {
-											if (err) {
-												Modal.alert(err);
-											}
-											else {
-												$img.remove();
-												album.imgs.splice(album.imgs.indexOf(img), 1);
-											}
-										});
-									})
-									.end()
-								.find(".downloadImg")
-									.prop({
-										href: `img/upload/${img.id}.${img.type}`,
-										download: `${img.id}.${img.type}`
-									})
-									.end()
-								.find(".deleteImg")
-									.click(() => {
-										Modal.deleteImg(img, () => {
+						$img
+							.find(".renameImg")
+								.click(() => {
+									Modal.renameImg(img, name => {
+										img.name = name;
+										$img.find(".name").text(name);
+									});
+								})
+								.end()
+							.find(".copyImg")
+								.click(() => {
+									Modal.copyImg(img, newImg => {
+										if (newImg) {
+											load(newImg.id);
+										}
+									});
+								})
+								.end()
+							.find(".moveImg")
+								.click(() => {
+									Modal.moveImg(img, err => {
+										if (err) {
+											Modal.alert(err);
+										}
+										else {
 											$img.remove();
 											album.imgs.splice(album.imgs.indexOf(img), 1);
-										});
+										}
 									});
-						}
-						else {
-							$img.find(".editBtn").remove();
+								})
+								.end()
+							.find(".downloadImg")
+								.click(() => {
+									Modal.downloadImg(img);
+								})
+								.end()
+							.find(".deleteImg")
+								.click(() => {
+									Modal.deleteImg(img, () => {
+										$img.remove();
+										album.imgs.splice(album.imgs.indexOf(img), 1);
+									});
+								});
+
+						if (album.user_id !== meId) {
+							$(".downloadImg").siblings().remove();
 						}
 					}
 				}
@@ -503,7 +501,7 @@ function modal(title = "", css = "auto", html = "", js) {
 
 	title = text(title);
 
-	if (/string|number/.test(typeof css)) {
+	if (/^(string|number)$/.test(typeof css)) {
 		css = {
 			width: css
 		};

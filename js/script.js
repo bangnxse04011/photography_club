@@ -65,6 +65,10 @@ if (!meId) {
 	});
 }
 else {
+	$(".btnPayIn").click(event => {
+		Modal.payIn();
+	});
+
 	$(".btnChangePass").click(event => {
 		Modal.changePass();
 	});

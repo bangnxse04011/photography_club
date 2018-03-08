@@ -1,6 +1,7 @@
 const GOOGLE_CLIENT_ID = "<?php echo GOOGLE_CLIENT_ID ?>";
 
-let view,
+let
+	view,
 	meId,
 	me,
 	sett,

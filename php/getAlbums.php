@@ -30,8 +30,7 @@ if ($search) {
 	$stm = $con->prepare("
 		SELECT
 			a.*,
-			u.name user_name,
-			0 is_like
+			u.name user_name
 		FROM albums a
 		JOIN users u
 		ON a.user_id=u.id
@@ -47,7 +46,8 @@ else {
 		FROM albums a
 		JOIN users u
 		ON a.user_id=u.id
-		WHERE $where_user_id AND a.status=1
+		WHERE $where_user_id
+			AND a.status=1
 		$order_by
 		LIMIT ?, ?
 	");
@@ -90,7 +90,7 @@ if ($rs = $stm->get_result()) {
 		}
 
 		if ($search) {
-			$album['distance'] = similar_text(strtolatin(mb_strtolower($album['name'])), $search);
+			similar_text(strtolatin(mb_strtolower($album['name'])), $search, $album['distance']);
 		}
 
 		$albums[] = $album;
@@ -98,29 +98,21 @@ if ($rs = $stm->get_result()) {
 }
 
 if ($search) {
-	$fltLike = [];
-	$fltDistance = [];
+	$albums = array_filter($albums, function($album) {
+		global $search;
 
-	foreach ($albums as $k => $v) {
-		if (preg_match("/\b$search\b/", strtolatin(mb_strtolower($v['name'])))) {
-			$fltLike[] = $v;
-		}
-		else {
-			$fltDistance[] = $v;
-		}
-	}
-
-	$fltDistance = array_filter($fltDistance, function($album) {
-		return $album['distance'] > 0;
+		return
+			preg_match("/\b$search\b/i", strtolatin($album['name'])) ||
+			preg_match("/\b$search/i", strtolatin($album['name'])) ||
+			$album['distance'] >= 50;
 	});
-
-	$albums = array_merge($fltLike, $fltDistance);
 
 	uasort($albums, function($a, $b) {
 		global $search;
 
 		if (
-			$a['is_like'] > $a['is_like'] ||
+			preg_match("/\b$search\b/i", strtolatin($a['name'])) < preg_match("/\b$search\b/i", strtolatin($b['name'])) ||
+			preg_match("/\b$search/i", strtolatin($a['name'])) < preg_match("/\b$search/i", strtolatin($b['name'])) ||
 			$a['distance'] < $b['distance']
 		) {
 			return 1;
