@@ -4,6 +4,7 @@ require 'util.php';
 $name = trim($_POST['name']);
 $date = isset($_POST['date']) ? $_POST['date'] : '';
 $location = isset($_POST['location']) ? $_POST['location'] : '';
+$price = +$_POST['price'];
 
 $con->begin_transaction();
 
@@ -11,7 +12,8 @@ if (
 	$meId &&
 	preg_match('/^.{1,200}$/', $name) &&
 	(preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date) || !$date) &&
-	preg_match('/^.{0,200}$/', $location)
+	preg_match('/^.{0,200}$/', $location) &&
+	$price >= 0 && $price <= 1e7
 ) {
 	$stm = $con->prepare("
 		SELECT count(0)
@@ -38,18 +40,20 @@ if (
 					date_created,
 					date_last_upload,
 					user_id,
+					price,
 					status
 				)
-				VALUES (?, ?, ?, ?, ?, ?, 1)
+				VALUES (?, ?, ?, ?, ?, ?, ?, 1)
 			");
 			$stm->bind_param(
-				'sssssi',
+				'sssssii',
 				$name,
 				$date,
 				$location,
 				$datetime,
 				$datetime,
-				$meId
+				$meId,
+				$price
 			);
 
 			if ($stm->execute()) {

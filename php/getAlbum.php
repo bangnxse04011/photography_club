@@ -9,11 +9,16 @@ $album = null;
 
 if ($id > 0 && $start >= 0 && $len > 0) {
 	$stm = $con->prepare("
-		SELECT albums.*, users.name user_name
+		SELECT
+			albums.*,
+			users.name user_name,
+			users.first_name user_first_name,
+			users.last_name user_last_name
 		FROM albums
 		JOIN users
 		ON albums.user_id=users.id
-		WHERE albums.id=? AND albums.status=1
+		WHERE albums.id=?
+			AND albums.status=1
 	");
 	$stm->bind_param('i', $id);
 	$stm->execute();

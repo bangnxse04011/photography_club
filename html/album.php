@@ -7,26 +7,32 @@
 	</div>
 	<div class="w3-container w3-cell-row">
 		<div class="w3-cell w3-left-align">
-			<ul style="padding-left:20px">
-				<table>
-					<tr>
-						<td style="width:162px"><li>Ngày chụp</li></td>
-						<td class="w3-text-gray date"></td>
-					</tr>
-					<tr>
-						<td style="width:162px"><li>Địa điểm</li></td>
-						<td class="w3-text-gray location"></td>
-					</tr>
-					<tr>
-						<td style="width:162px"><li>Người tạo</li></td>
-						<td class="w3-text-gray user_name"></td>
-					</tr>
-					<tr>
-						<td style="width:162px"><li>Tải lên lần cuối</li></td>
-						<td class="w3-text-gray date_last_upload"></td>
-					</tr>
-				</table>
-			</ul>
+			<div class="w3-row w3-section">
+				<div class="w3-col m6">
+					<div class="w3-row">
+						<div class="w3-col s4 w3-text-teal">Người tạo: </div>
+						<div class="w3-col s8 w3-text-dark-gray user_name"></div>
+					</div>
+					<div class="w3-row">
+						<div class="w3-col s4 w3-text-teal">Ngày chụp: </div>
+						<div class="w3-col s8 w3-text-dark-gray date"></div>
+					</div>
+					<div class="w3-row">
+						<div class="w3-col s4 w3-text-teal">Tải lên lần cuối: </div>
+						<div class="w3-col s8 w3-text-dark-gray date_last_upload"></div>
+					</div>
+				</div>
+				<div class="w3-col m6">
+					<div class="w3-row">
+						<div class="w3-col s4 w3-text-teal">Địa điểm: </div>
+						<div class="w3-col s8 w3-text-dark-gray location"></div>
+					</div>
+					<div class="w3-row">
+						<div class="w3-col s4 w3-text-teal">Giá tiền: </div>
+						<div class="w3-col s8 w3-text-dark-gray price"></div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="w3-cell w3-right-align w3-cell-bottom">
 			<button class="w3-btn w3-red w3-margin-bottom addImg" style="display:none">Thêm ảnh mới</button>

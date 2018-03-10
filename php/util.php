@@ -11,7 +11,8 @@ $regex = [
 $meId = isset($_SESSION['id']) ? +$_SESSION['id'] : 0;
 $me = [];
 $sett = [];
-$view = "home";
+$view = 'home';
+$meToken = '';
 
 $con = @new mysqli(SERVER, USERNAME, PASSWORD, DATABASE);
 
@@ -27,21 +28,40 @@ if (isset($_GET['view'])) {
 }
 
 if ($meId) {
-	$query = "SELECT * FROM users WHERE id=$meId";
+	function getMe() {
+		global $meId, $con, $me, $sett, $meToken;
 
-	if ($rs = $con->query($query)) {
-		$me = $rs->fetch_assoc();
-	}
+		$query = "SELECT * FROM users WHERE id=$meId";
 
-	$query = "SELECT * FROM users_setting WHERE user_id=$meId";
+		if ($rs = $con->query($query)) {
+			$me = $rs->fetch_assoc();
+			$meToken = sha1(
+				sha1(
+					$me['last_name'].
+					md5($me['name']).
+					'@sAlt:#493'
+				).
+				$me['id'].
+				$me['name'].
+				md5(
+					$me['date_created'].
+					$me['first_name']
+				)
+			);
+		}
 
-	if ($rs = $con->query($query)) {
-		$sett = $rs->fetch_assoc();
+		$query = "SELECT * FROM users_setting WHERE user_id=$meId";
 
-		foreach ($sett as $k => $v) {
-			$sett[$k] = is_numeric($v) ? +$v : $v;
+		if ($rs = $con->query($query)) {
+			$sett = $rs->fetch_assoc();
+
+			foreach ($sett as $k => $v) {
+				$sett[$k] = is_numeric($v) ? +$v : $v;
+			}
 		}
 	}
+
+	getMe();
 }
 
 function strtolatin($str) {

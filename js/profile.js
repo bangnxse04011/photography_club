@@ -1,9 +1,32 @@
 function loadProfile() {
-	let $date_created;
+	let
+		$form = $(".profile .__form"),
+		$dateCreated = $(".profile .__dateCreated"),
+		$btnSubmit = $(".profile .__btnSubmit"),
+		oldFormData = $form.serialize();
 
-	$date_created = $(".formProfile__date_created");
+	$dateCreated.val(dateStr($dateCreated.val()));
 
-	$date_created.val(dateStr($date_created.val()));
+	$btnSubmit.prop("disabled", true);
+
+	$form
+		.submit(function(event) {
+			event.preventDefault();
+
+			Modal.wait("Đang cập nhật...", $0 => {
+				$.post(
+					"php/updateProfile.php",
+					$form.serialize(),
+					result => {
+						location.href = `?view=profile&isUpdateSuccess=${result}`;
+					}
+				);
+			});
+		})
+		.find("[name]")
+			.on("input", function(event) {
+				$btnSubmit.prop("disabled", $form.serialize() === oldFormData);
+			});
 }
 
 loadProfile();

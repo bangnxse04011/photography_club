@@ -3,8 +3,10 @@ const GOOGLE_CLIENT_ID = "<?php echo GOOGLE_CLIENT_ID ?>";
 let
 	view,
 	meId,
+	currencyFormat,
 	me,
 	sett,
+	meToken,
 	xhrSearchSuggest,
 	$viewImg,
 	$searchSuggest = $(searchSuggest);
@@ -21,3 +23,9 @@ sett = <?php
 	unset($tmp['user_id']);
 	echo json_encode($sett);
 ?>;
+meToken = "<?php echo $meToken ?>";
+
+currencyFormat = Intl.NumberFormat("vi-VN", {
+	style: "currency",
+	currency: "VND"
+});

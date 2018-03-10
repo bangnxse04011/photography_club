@@ -21,8 +21,11 @@ function getAlbum({
 					.find(".location")
 						.text(album.location || "--")
 						.end()
+					.find(".price")
+						.text(currencyFormat.format(album.price))
+						.end()
 					.find(".user_name")
-						.text(album.user_name)
+						.text(`${album.user_first_name} ${album.user_last_name}`)
 						.end()
 					.find(".date_last_upload")
 						.text(dateStr(album.date_last_upload, true));
@@ -152,8 +155,11 @@ function getAlbum({
 								});
 
 						if (album.user_id !== meId) {
-							$(".downloadImg").siblings().remove();
+							// $(".downloadImg").siblings().remove();
 						}
+
+						// Tạm thời loại bỏ download ảnh
+						$img.find(".downloadImg").remove();
 					}
 				}
 				else {
@@ -172,7 +178,7 @@ function getAlbums({
 	elm,
 	click = () => {},
 	dblclick = () => {},
-	/* view, select */
+	/* mode = view|select */
 	mode = "view",
 	selectedId,
 	removeId,
@@ -227,6 +233,8 @@ function getAlbums({
 										<li class="w3-bar-item w3-button editBtn renameAlbum">Đổi tên</li>
 										<li class="w3-bar-item w3-button editBtn editDateAlbum">Sửa ngày chụp</li>
 										<li class="w3-bar-item w3-button editBtn editLocationAlbum">Sửa địa điểm</li>
+										<li class="w3-bar-item w3-button editBtn editPriceAlbum">Sửa giá tiền</li>
+										<li class="w3-bar-item w3-button editBtn downloadAlbum">Tải xuống</li>
 										<li class="w3-bar-item w3-button editBtn deleteAlbum">Xóa</li>
 									</ul>
 								</div>
@@ -324,63 +332,79 @@ function getAlbums({
 									.toggle();
 							});
 
-					if (album.user_id === meId) {
-						$album
-							.find(".addImgAlbum")
-								.click(event => {
-									Modal.upload({
-										album,
-										canSelectAlbum: false
-									});
-								})
-								.end()
-							.find(".renameAlbum")
-								.click(event => {
-									Modal.renameAlbum(album, name => {
-										album.name = name;
-										fillName(name);
-									});
-								})
-								.end()
-							.find(".editDateAlbum")
-								.click(event => {
-									Modal.editDateAlbum(album, date => {
-										album.date = date;
-										fillDate(date);
-									});
-								})
-								.end()
-							.find(".editLocationAlbum")
-								.click(event => {
-									Modal.editLocationAlbum(album, location => {
-										album.location = location;
-										fillLocation(location);
-									});
-								})
-								.end()
-							.find(".deleteAlbum")
-								.click(event => {
-									Modal.deleteAlbum(album, () => {
-										$album.remove();
-										albums.splice(albums.indexOf(album), 1);
-									});
+					$album
+						.find(".addImgAlbum")
+							.click(event => {
+								Modal.upload({
+									album,
+									canSelectAlbum: false
 								});
+							})
+							.end()
+						.find(".renameAlbum")
+							.click(event => {
+								Modal.renameAlbum(album, name => {
+									album.name = name;
+									fillName(name);
+								});
+							})
+							.end()
+						.find(".editDateAlbum")
+							.click(event => {
+								Modal.editDateAlbum(album, date => {
+									album.date = date;
+									fillDate(date);
+								});
+							})
+							.end()
+						.find(".editLocationAlbum")
+							.click(event => {
+								Modal.editLocationAlbum(album, location => {
+									album.location = location;
+									fillLocation(location);
+								});
+							})
+							.end()
+						.find(".editPriceAlbum")
+							.click(event => {
+								Modal.editPriceAlbum(album, price => {
+									album.price = price;
+								});
+							})
+							.end()
+						.find(".downloadAlbum")
+							.click(event => {
+								Modal.downloadAlbum(album);
+							})
+							.end()
+						.find(".deleteAlbum")
+							.click(event => {
+								Modal.deleteAlbum(album, () => {
+									$album.remove();
+									albums.splice(albums.indexOf(album), 1);
+								});
+							});
 
-						[
-							"addImgAlbum",
-							"renameAlbum",
-							"editDateAlbum",
-							"editLocationAlbum",
-							"deleteAlbum"
-						].map(v => {
-							if (removeEditBtn.includes(v)) {
-								$album.find("." + v).remove();
-							}
-						});
+					if (album.user_id !== meId) {
+						$album
+							.find(".downloadAlbum")
+							.siblings()
+								.remove();
 					}
-					else {
-						$album.find(".editBtn").remove();
-					}
+
+					[
+						"addImgAlbum",
+						"renameAlbum",
+						"editDateAlbum",
+						"editLocationAlbum",
+						"editPriceAlbum",
+						"downloadAlbum",
+						"deleteAlbum"
+					].map(v => {
+						if (removeEditBtn.includes(v)) {
+							$album.find("." + v).remove();
+						}
+					});
 
 					if (selectedId == album.id) {
 						isSelected = true;

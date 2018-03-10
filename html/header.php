@@ -26,7 +26,7 @@
 						</div>
 					</div>
 					<a href="?view=profile" class="w3-bar-item w3-button w3-hover-light-gray">
-						<img src="https://png.icons8.com/windows/24/stack-of-photos.png">
+						<img src="https://png.icons8.com/windows/24/user-menu-male.png">
 						<span class="w3-margin-left">Thông tin tài khoản</span>
 					</a>
 					<a href="?view=myAlbums" class="w3-bar-item w3-button w3-hover-light-gray">
@@ -34,7 +34,7 @@
 						<span class="w3-margin-left">Album ảnh</span>
 					</a>
 					<a href="javascript:" class="w3-bar-item w3-button w3-hover-light-gray btnPayIn">
-						<img src="https://png.icons8.com/windows/24/money.png">
+						<img src="https://png.icons8.com/windows/24/average-2.png">
 						<span class="w3-margin-left">Nạp tiền</span>
 					</a>
 					<a href="javascript:" class="w3-bar-item w3-button w3-hover-light-gray btnChangePass">

@@ -117,7 +117,7 @@ let Modal = {
 						Modal.alert(err);
 					}
 					else {
-						// location.href = "";
+						location.href = "";
 					}
 				});
 			});
@@ -193,10 +193,19 @@ let Modal = {
 				<div class="w3-light-gray">
 					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
 				</div>
+				<form class="w3-padding __formPhoneCard">
+					<div class="w3-section">
+						<label class="w3-text-teal">Nhập mã thẻ cào điện thoại: </label>
+						<input type="text" name="code" class="w3-input w3-border" required>
+					</div>
+					<input type="submit" class="w3-button w3-light-gray" value="OK">
+					<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
+				</form>
 			</div>
 			<div class="__phoneCard">
 				<div class="w3-light-gray">
 					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
+					<p>Xin lỗi, hiện tại chưa hỗ trợ dịch vụ này!</p>
 				</div>
 				<form class="w3-padding __formPhoneCard">
 					<div class="w3-section">
@@ -436,7 +445,6 @@ let Modal = {
 					elm: $0.list,
 					click(album) {
 						selected = album;
-
 						$0.ok.prop("disabled", false).removeClass("w3-disabled");
 					},
 					dblclick: okFn,
@@ -486,6 +494,14 @@ let Modal = {
 					<img src="https://png.icons8.com/material/20/333333/marker.png">&nbsp;
 					<label>Địa điểm</label>
 					<input type="text" name="location" class="w3-input w3-border w3-round __location">
+				</div>
+				<div class="w3-padding-top">
+					<img src="https://png.icons8.com/material/20/333333/us-dollar.png">&nbsp;
+					<label>Giá tiền</label>
+					<div class="w3-row">
+						<input type="number" name="price" class="w3-col s10 w3-input w3-border w3-round __price" value="0" min="0" max="10000000" required>
+						<div class="w3-col s2 w3-center w3-padding-top w3-padding-left" title="Đồng Việt Nam">₫</div>
+					</div>
 				</div>
 				<div class="w3-center w3-margin-top">
 					<input type="submit" class="w3-button w3-light-gray" value="OK">
@@ -541,8 +557,9 @@ let Modal = {
 				else {
 					$.post("php/createAlbum.php", $0.form.serialize(), res => {
 						if (+res) {
-							callback && callback(+res);
-
+							if (typeof callback === "function") {
+								callback(+res);
+							}
 							$0.fn.close();
 						}
 						else {
@@ -561,7 +578,7 @@ let Modal = {
 					<label>Nhập tên mới: </label>
 					<input type="text" name="name" class="w3-input w3-border __name" value="${text(album.name)}" minlength="1" maxlength="200" data-err-blank="Tên album phải chứa ít nhất một ký tự không phải khoảng trắng." autofocus required>
 				</div>
-				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<input type="submit" class="w3-button w3-light-gray" value="OK">
 				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
@@ -597,8 +614,9 @@ let Modal = {
 							Modal.alert(err);
 						}
 						else {
-							callback(this.name.value);
-
+							if (typeof callback === "function") {
+								callback(this.name.value);
+							}
 							$0.fn.close();
 						}
 					});
@@ -617,7 +635,7 @@ let Modal = {
 					<label>Chọn ngày: </label>
 					<input type="date" name="date" class="w3-input w3-border __date" value="${album.date}" data-err-future="Ngày chụp không thể là một ngày trong tương lai." autofocus>
 				</div>
-				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<input type="submit" class="w3-button w3-light-gray" value="OK">
 				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
@@ -650,8 +668,9 @@ let Modal = {
 							Modal.alert(err);
 						}
 						else {
-							callback(this.date.value);
-
+							if (typeof callback === "function") {
+								callback(this.date.value);
+							}
 							$0.fn.close();
 						}
 					});
@@ -670,7 +689,7 @@ let Modal = {
 					<label>Nhập địa điểm: </label>
 					<input type="text" name="location" class="w3-input w3-border __location" value="${text(album.location)}" autofocus>
 				</div>
-				<input type="submit" value="OK" class="w3-button w3-light-gray">
+				<input type="submit" class="w3-button w3-light-gray" value="OK">
 				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
 			</form>
 		`, $0 => {
@@ -689,8 +708,9 @@ let Modal = {
 						Modal.alert(err);
 					}
 					else {
-						callback(this.location.value);
-
+						if (typeof callback === "function") {
+							callback(this.location.value);
+						}
 						$0.fn.close();
 					}
 				});
@@ -698,8 +718,80 @@ let Modal = {
 		});
 	},
 
+	editPriceAlbum(album, callback) {
+		return modal("Sửa giá tiền album", 320, `
+			<form class="w3-padding __form">
+				<div class="w3-section">
+					<label>Nhập giá tiền: </label>
+					<input type="number" name="price" class="w3-input w3-border __price" value="${text(album.price)}" autofocus>
+				</div>
+				<input type="submit" class="w3-button w3-light-gray" value="OK">
+				<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
+			</form>
+		`, $0 => {
+			$0.price.select();
+
+			$0.form.submit(function(event) {
+				event.preventDefault();
+
+				$.post("php/editPriceAlbum.php", {
+					price: this.price.valueAsNumber,
+					album_id: album.id
+				}, err => {
+					if (err) {
+						Modal.alert(err);
+					}
+					else {
+						if (typeof callback === "function") {
+							callback(this.price.valueAsNumber);
+						}
+						$0.fn.close();
+					}
+				});
+			});
+		});
+	},
+
+	downloadAlbum(album) {
+		if (meId) {
+			if (album.price > 0 && album.user_id !== meId) {
+				Modal.wait(undefined, $0 => {
+					$.get("php/getMoney.php", money => {
+						$0.fn.close();
+
+						if (money < album.price) {
+							Modal.alert("Bạn không đủ tiền để tải album này, vui lòng nạp thêm");
+						}
+						else {
+							download();
+						}
+					})
+				});
+			}
+			else {
+				download();
+			}
+
+			function download() {
+				Modal.confirm(
+					`Bạn chắc chắn muốn tải album "${album.name}" với giá ${currencyFormat.format(album.price)} không?`,
+					() => {
+						let a;
+
+						a = document.createElement("a");
+						a.href = `php/downloadAlbum.php?id=${album.id}&token=${meToken}`;
+						a.download = `${album.id}.zip`;
+					}
+				);
+			}
+		}
+		else {
+			Modal.login();
+		}
+	},
+
 	deleteAlbum(album, callback) {
-		Modal.confirm(`Bạn chắc chắn muốn xóa album "${text(album.name)}"? Tất cả ảnh trong album cũng sẽ bị xóa.`, () => {
+		Modal.confirm(`Bạn chắc chắn muốn xóa album "${text(album.name)}" không? Tất cả ảnh trong album cũng sẽ bị xóa.`, () => {
 			Modal.wait(undefined, $1 => {
 				$.post("php/deleteAlbum.php", {
 					id: album.id
@@ -871,7 +963,7 @@ let Modal = {
 						<div class="w3-col s5">
 							<div class="w3-right">
 								<img class="w3-bar-item w3-button w3-hover-dark-gray __download" src="https://png.icons8.com/material/24/ffffff/download.png" title="Tải xuống">
-								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Bật/tắt toàn màn hình">
+								<img class="w3-bar-item w3-button w3-hover-dark-gray w3-hide-fullscreen __fullscreen" src="https://png.icons8.com/material/24/ffffff/fit-to-width.png" title="Bật/tắt xem toàn màn hình">
 								<img class="w3-bar-item w3-button w3-hover-red __close" src="https://png.icons8.com/material/24/ffffff/delete-sign.png" title="Đóng">
 							</div>
 						</div>
@@ -886,6 +978,9 @@ let Modal = {
 			});
 
 			$0.modalHeader.hide();
+
+			// Tạm thời loại bỏ download ảnh
+			$0.download.remove();
 
 			if (img.status == 1) {
 				$0.img
