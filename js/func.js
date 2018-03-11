@@ -514,14 +514,10 @@ function getAlbums({
 				else {
 					let $content = $(`
 						<div class="w3-padding-small w3-text-gray">
-							Không tìm thấy kết quả với từ khóa "<span class="keyword"></span>"
+							Không tìm thấy kết quả với từ khóa "${text(search)}"
 						</div>
 					`);
 					elm.append($content);
-
-					$content
-						.find(".keyword")
-						.text(search);
 				}
 			}
 		});
