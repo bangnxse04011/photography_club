@@ -25,29 +25,38 @@ $(window)
 	})
 	.resize();
 
-$(document).keydown(event => {
-	let key = event.key;
+$(document)
+	.keydown(event => {
+		key = event.key;
 
-	switch (key) {
-		case "ArrowLeft":
-			if ($viewImg) {
-				$viewImg.prev.click();
-			}
-			break;
+		switch (key) {
+			case "ArrowLeft":
+				if ($viewImg) {
+					$viewImg.prev.click();
+				}
+				break;
 
-		case "ArrowRight":
-			if ($viewImg) {
-				$viewImg.next.click();
-			}
-			break;
+			case "ArrowRight":
+				if ($viewImg) {
+					$viewImg.next.click();
+				}
+				break;
 
-		case "Escape":
-			if ($viewImg) {
-				$viewImg.fn.close();
-			}
-			break;
-	}
-});
+			case "Escape":
+				if (modals.childElementCount && keydownOnce) {
+					$(modals.lastElementChild).data("$")().fn.close();
+				}
+				break;
+		}
+
+		if (keydownOnce) {
+			keydownOnce = false;
+		}
+	})
+	.keyup(event => {
+		key = "";
+		keydownOnce = true;
+	});
 
 $(".w3-dropdown-click").click(function() {
 	$(this)

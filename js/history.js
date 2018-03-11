@@ -82,6 +82,15 @@ function loadHistory() {
 							`);
 							break;
 
+						case "download_album":
+							$li = $(`
+								<div class="w3-cell-row">
+									<div class="w3-cell w3-text-gray" style="width:96px">${v[0].time.slice(0, -3)}</div>
+									<div class="w3-cell content">Bạn đã tải xuống một album với giá ${currencyFormat.format(v[0].price)}</div>
+								</div>
+							`);
+							break;
+
 						case "move_img":
 							$li = $(`
 								<li class="w3-cell-row">
@@ -163,6 +172,14 @@ function loadHistory() {
 										<del class="w3-text-gray">
 											${text(v2.img_name)}.${v2.img_type}
 										</del>
+									</div>
+								`);
+								break;
+
+							case "download_album":
+								$li2 = $(`
+									<div class="w3-margin-left w3-padding-left w3-padding-top">
+										<a href="?view=album&id=${v2.album_id}" class="w3-text-teal w3-underline-none">${text(v2.album_name)}</a>
 									</div>
 								`);
 								break;
@@ -254,6 +271,9 @@ function loadHistory() {
 						$myHistory.find(".footer").hide();
 					}
 				}
+			}
+			else {
+				$myHistory.find(".loader").hide();
 			}
 		});
 	}

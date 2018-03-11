@@ -154,8 +154,18 @@ img.w3-img-empty:not([src]) {
 
 @keyframes modal {
 	0% {
+		opacity: .4;
+		transform: scale(.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+/*@keyframes modal {
+	0% {
 		opacity: 0;
-		transform: scale(0.8);
+		transform: scale(.8);
 	}
 	50% {
 		transform: scale(1.05);
@@ -165,7 +175,7 @@ img.w3-img-empty:not([src]) {
 		transform: scale(1);
 	}
 }
-
+*/
 #header {
 	position: fixed;
 	padding: 6px 8px;

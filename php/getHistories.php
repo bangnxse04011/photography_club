@@ -16,6 +16,7 @@ if ($meId && (!$date || preg_match('/^\d{4,6}-[01]\d-[0-3]\d$/', $date))) {
 		'create_album',
 		'delete_album',
 		'delete_img',
+		'download_album',
 		'move_img',
 		'rename_img',
 		'rename_album',

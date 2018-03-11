@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 08, 2018 at 11:18 AM
+-- Generation Time: Mar 11, 2018 at 03:47 PM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -34,6 +34,7 @@ CREATE TABLE `albums` (
   `date_created` datetime NOT NULL,
   `date_last_upload` datetime NOT NULL,
   `user_id` int(11) NOT NULL,
+  `price` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -41,24 +42,26 @@ CREATE TABLE `albums` (
 -- Dumping data for table `albums`
 --
 
-INSERT INTO `albums` (`id`, `name`, `date`, `location`, `date_created`, `date_last_upload`, `user_id`, `status`) VALUES
-(1, 'Hotgirl''s', '2017-10-20', 'Hà Nội 2', '2018-01-14 09:39:26', '2018-02-02 14:16:52', 1, 1),
-(2, 'Động vật :)', '2018-01-13', 'Vườn thú Thủ Lệ, Đường vào Thủ Lệ, Ngọc Khánh, Hà Nội, Việt Nam', '2017-07-14 09:40:36', '2018-01-30 10:54:20', 1, 1),
-(3, 'Ảnh vui :3', '0000-00-00', '', '2018-01-14 10:59:05', '2018-01-30 10:09:11', 2, 1),
-(4, 'Programmer', '2015-09-13', 'Silicon valley, California, USA', '2018-01-30 10:22:23', '2018-01-30 10:40:17', 3, 1),
-(5, 'games', '2018-01-30', '', '2018-01-30 10:51:47', '2018-01-30 10:51:50', 3, 1),
-(6, 'Phong cảnh', '2018-01-29', '', '2018-01-30 11:02:33', '2018-01-30 13:59:19', 1, 1),
-(7, 'Phong cảnh', '2018-01-30', '', '2018-01-30 14:38:49', '2018-01-30 14:38:52', 3, 1),
-(8, 'Vũ trụ', '2018-02-02', 'University City, Missouri, Hoa Kỳ', '2018-02-02 18:27:44', '2018-02-02 18:45:00', 1, 1),
-(9, '@Delete@@', '2018-02-02', '', '2018-02-02 18:43:29', '2018-02-02 18:46:50', 1, 0),
-(10, 'adsadsads', '2018-02-02', '', '2018-02-02 18:53:04', '2018-02-02 18:53:04', 2, 0),
-(11, '213123123', '2018-02-02', 'Trondheim, Na Uy', '2018-02-02 18:55:15', '2018-02-02 18:55:15', 2, 0),
-(12, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type a', '2018-02-02', 'Karnataka, Ấn Độ', '2018-02-02 20:18:54', '2018-02-02 20:31:20', 3, 1),
-(13, '123', '2018-02-02', '', '2018-02-02 20:27:00', '2018-02-02 20:27:00', 3, 0),
-(14, '777', '2018-02-02', '', '2018-02-02 20:28:21', '2018-02-02 20:28:21', 3, 0),
-(15, 'wqe', '2018-02-02', '', '2018-02-02 20:28:41', '2018-02-02 20:28:41', 3, 0),
-(16, 'cuuciucucc', '2018-02-02', 'Reno, Nevada, Hoa Kỳ', '2018-02-02 20:29:15', '2018-02-02 20:29:15', 3, 1),
-(17, 'error!!!', '2018-02-02', '', '2018-02-02 20:29:40', '2018-02-02 20:29:40', 3, 0);
+INSERT INTO `albums` (`id`, `name`, `date`, `location`, `date_created`, `date_last_upload`, `user_id`, `price`, `status`) VALUES
+(1, 'Hotgirl''s', '2017-10-20', 'Hà Nội 2', '2018-01-14 09:39:26', '2018-02-02 14:16:52', 1, 0, 1),
+(2, 'Động vật :)', '2018-01-13', 'Vườn thú Thủ Lệ, Đường vào Thủ Lệ, Ngọc Khánh, Hà Nội, Việt Nam', '2017-07-14 09:40:36', '2018-01-30 10:54:20', 1, 12500, 1),
+(3, 'Ảnh vui :3', '0000-00-00', '', '2018-01-14 10:59:05', '2018-01-30 10:09:11', 2, 0, 1),
+(4, 'Programmer', '2015-09-13', 'Silicon valley, California, USA', '2018-01-30 10:22:23', '2018-01-30 10:40:17', 3, 0, 1),
+(5, 'games', '2018-01-30', '', '2018-01-30 10:51:47', '2018-01-30 10:51:50', 3, 0, 1),
+(6, 'Phong cảnh', '2018-01-29', '', '2018-01-30 11:02:33', '2018-01-30 13:59:19', 1, 0, 1),
+(7, 'Phong cảnh', '2018-01-30', '', '2018-01-30 14:38:49', '2018-01-30 14:38:52', 3, 0, 1),
+(8, 'Vũ trụ', '2018-02-02', 'University City, Missouri, Hoa Kỳ', '2018-02-02 18:27:44', '2018-02-02 18:45:00', 1, 0, 1),
+(9, '@Delete@@', '2018-02-02', '', '2018-02-02 18:43:29', '2018-02-02 18:46:50', 1, 0, 0),
+(10, 'adsadsads', '2018-02-02', '', '2018-02-02 18:53:04', '2018-02-02 18:53:04', 2, 0, 0),
+(11, '213123123', '2018-02-02', 'Trondheim, Na Uy', '2018-02-02 18:55:15', '2018-02-02 18:55:15', 2, 0, 0),
+(12, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type a', '2018-02-02', 'Karnataka, Ấn Độ', '2018-02-02 20:18:54', '2018-02-02 20:31:20', 3, 0, 1),
+(13, '123', '2018-02-02', '', '2018-02-02 20:27:00', '2018-02-02 20:27:00', 3, 0, 0),
+(14, '777', '2018-02-02', '', '2018-02-02 20:28:21', '2018-02-02 20:28:21', 3, 0, 0),
+(15, 'wqe', '2018-02-02', '', '2018-02-02 20:28:41', '2018-02-02 20:28:41', 3, 0, 0),
+(16, 'cuuciucucc', '2018-02-02', 'Reno, Nevada, Hoa Kỳ', '2018-02-02 20:29:15', '2018-02-02 20:29:15', 3, 0, 1),
+(17, 'error!!!', '2018-02-02', '', '2018-02-02 20:29:40', '2018-02-02 20:29:40', 3, 0, 0),
+(18, 'Pokemon', '2018-03-11', 'Rua Vasco Santana FD, Bồ Đào Nha', '2018-03-11 22:00:09', '2018-03-11 22:00:09', 4, 100, 1),
+(19, 'asdasd', '2018-03-11', '', '2018-03-11 22:00:22', '2018-03-11 22:00:22', 4, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -123,7 +126,9 @@ INSERT INTO `histories_create_album` (`id`, `user_id`, `album_id`, `album_name`,
 (14, 3, 14, '777', '2018-02-02', '20:28:21'),
 (15, 3, 15, 'wqe', '2018-02-02', '20:28:41'),
 (16, 3, 16, 'cuuciucucc', '2018-02-02', '20:29:15'),
-(17, 3, 17, 'error!!!', '2018-02-02', '20:29:40');
+(17, 3, 17, 'error!!!', '2018-02-02', '20:29:40'),
+(18, 4, 18, 'Pokemon', '2018-03-11', '22:00:09'),
+(19, 4, 19, 'asdasd', '2018-03-11', '22:00:22');
 
 -- --------------------------------------------------------
 
@@ -151,7 +156,8 @@ INSERT INTO `histories_delete_album` (`id`, `user_id`, `album_id`, `album_name`,
 (4, 3, 13, '123', '2018-02-02', '20:36:10'),
 (5, 3, 15, 'wqe', '2018-02-02', '20:36:14'),
 (6, 3, 14, '777', '2018-02-02', '20:36:20'),
-(7, 3, 17, 'error!!!', '2018-02-02', '20:36:36');
+(7, 3, 17, 'error!!!', '2018-02-02', '20:36:36'),
+(8, 4, 19, 'asdasd', '2018-03-11', '22:00:28');
 
 -- --------------------------------------------------------
 
@@ -174,6 +180,22 @@ CREATE TABLE `histories_delete_img` (
 
 INSERT INTO `histories_delete_img` (`id`, `user_id`, `img_id`, `img_name`, `date`, `time`) VALUES
 (1, 1, 14, 'ec24f8a3ff87868b33d8cc057cbc9d84', '2018-02-01', '08:44:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `histories_download_album`
+--
+
+CREATE TABLE `histories_download_album` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `album_id` int(11) NOT NULL,
+  `album_name` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `price` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `date` date NOT NULL,
+  `time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -368,7 +390,10 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `pass`, `first_name`, `last_name`, `email`, `date_created`, `money`, `status`) VALUES
 (1, 'tiencoffee', 'b656ee4eb330f88c08554ad0395846a3', 'Trần Quang', 'Tiến', 'tiencoffee4@gmail.com', '2018-01-13', 0, 1),
 (2, 'barack-obama', 'bf166701e09be1ddc752dc4f7ad123d4', 'Barack', 'Obama', '', '2018-01-14', 0, 1),
-(3, '742Cutiefly', '9fa57a07946b9eb4f1ffd333a87d5366', 'Cutie', 'Fly', 'cutiefly742@yahoo.com', '2018-01-30', 0, 1);
+(3, '742Cutiefly', '9fa57a07946b9eb4f1ffd333a87d5366', 'Cutie', 'Fly', 'cutiefly742@yahoo.com', '2018-01-30', 0, 1),
+(4, 'tajiri-satoshi', '007b1ea49be4f3729101e631b50e7fe6', 'Tajiri', 'Satoshi', 'tajiri.satoshi@gmail.com', '2018-03-10', 0, 1),
+(5, 'khacviet123', '792d15f0e72f98023c926a13665a3ba0', 'Khắc', 'Việt', 'khacviet123@gmail.com', '2018-03-11', 0, 1),
+(6, 'dan-nguyen', 'cb96bd583478fa4dd20219fb12d81248', 'Đan', 'Nguyên', 'dan-nguyen@yahoo.com', '2018-03-11', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -389,7 +414,10 @@ CREATE TABLE `users_setting` (
 INSERT INTO `users_setting` (`user_id`, `optimize_contrast`, `motion_effect`) VALUES
 (1, 1, 1),
 (2, 1, 1),
-(3, 1, 1);
+(3, 1, 1),
+(4, 1, 1),
+(5, 1, 1),
+(6, 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -423,6 +451,12 @@ ALTER TABLE `histories_delete_album`
 -- Indexes for table `histories_delete_img`
 --
 ALTER TABLE `histories_delete_img`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `histories_download_album`
+--
+ALTER TABLE `histories_download_album`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -475,7 +509,7 @@ ALTER TABLE `users_setting`
 -- AUTO_INCREMENT for table `albums`
 --
 ALTER TABLE `albums`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `histories_copy_img`
 --
@@ -485,17 +519,22 @@ ALTER TABLE `histories_copy_img`
 -- AUTO_INCREMENT for table `histories_create_album`
 --
 ALTER TABLE `histories_create_album`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `histories_delete_album`
 --
 ALTER TABLE `histories_delete_album`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `histories_delete_img`
 --
 ALTER TABLE `histories_delete_img`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `histories_download_album`
+--
+ALTER TABLE `histories_download_album`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `histories_move_img`
 --
@@ -525,12 +564,12 @@ ALTER TABLE `imgs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `users_setting`
 --
 ALTER TABLE `users_setting`
-  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

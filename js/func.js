@@ -591,6 +591,7 @@ function modal(title = "", css = "auto", html = "", js) {
 	});
 
 	$n.modalContent.css(css);
+	$modal.data("$", () => $n);
 
 	setTimeout(() => {
 		$n.modalContent.removeClass("anim-show-modal");

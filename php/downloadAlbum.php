@@ -86,8 +86,37 @@ if ($meId) {
 		}
 
 		function compressAlbum(&$con, $album) {
-			// $con->commit();
-			// exit;
+			$zip = new ZipArchive();
+			$path = "../img/download/$album[id]-$meId.zip";
+
+			if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+				$stm = $con->prepare("
+					SELECT *
+					FROM imgs
+					WHERE album_id=?
+				");
+				$stm->bind_param('i', $album['id']);
+				$stm->execute();
+
+				if ($rs = $stm->get_result()) {
+					while ($img = $rs->fetch_assoc()) {
+						if (!$zip->addFile("../img/upload/$img[id].png")) {
+							$con->rollback();
+							die;
+						}
+					}
+				}
+
+				$zip->close();
+
+				header('Content-Type: application/zip');
+				header('Content-Disposition: attachment; filename="'.basename($path).'"');
+				header('Content-Length: '.filesize($path));
+				header("Location: $path");
+
+				$con->commit();
+				exit;
+			}
 		}
 
 		$con->rollback();

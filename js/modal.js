@@ -75,7 +75,7 @@ let Modal = {
 				<p class="separator">
 					<span>hoặc</span>
 				</p>
-				<form class="__form" action="php/register.php" method="post">
+				<form class="__form">
 					<div class="w3-row">
 						<div class="w3-col m6 w3-padding-top">
 							<label>Họ</label>
@@ -109,18 +109,18 @@ let Modal = {
 				</form>
 			</div>
 		`, $0 => {
-			googleSignin($0.google[0], gUser => {
-				$.post("php/registerGoogle.php", {
-					id_token: gUser.getAuthResponse().id_token
-				}, err => {
-					if (err) {
-						Modal.alert(err);
-					}
-					else {
-						location.href = "";
-					}
-				});
-			});
+			// googleSignin($0.google[0], gUser => {
+			// 	$.post("php/registerGoogle.php", {
+			// 		id_token: gUser.getAuthResponse().id_token
+			// 	}, err => {
+			// 		if (err) {
+			// 			Modal.alert(err);
+			// 		}
+			// 		else {
+			// 			location.href = "";
+			// 		}
+			// 	});
+			// });
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -146,7 +146,7 @@ let Modal = {
 
 	login() {
 		return modal("Đăng nhập", 320, `
-			<form class="w3-container __form" action="php/login.php" method="post">
+			<form class="w3-container __form">
 				<p>
 					<label>Tên tài khoản</label>
 					<input type="text" name="name" class="w3-input w3-border w3-round" minlength="6" maxlength="50" pattern="[a-zA-Z0-9_\\-]+" autofocus required>
@@ -193,19 +193,13 @@ let Modal = {
 				<div class="w3-light-gray">
 					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
 				</div>
-				<form class="w3-padding __formPhoneCard">
-					<div class="w3-section">
-						<label class="w3-text-teal">Nhập mã thẻ cào điện thoại: </label>
-						<input type="text" name="code" class="w3-input w3-border" required>
-					</div>
-					<input type="submit" class="w3-button w3-light-gray" value="OK">
-					<input type="button" class="w3-button w3-light-gray __close" value="Hủy">
+				<form class="w3-padding __formBankCard">
+					<p>Xin lỗi, website hiện tại chưa hỗ trợ dịch vụ này!</p>
 				</form>
 			</div>
 			<div class="__phoneCard">
 				<div class="w3-light-gray">
 					<button type="button" class="w3-button __btnBack">&larr; Quay lại</button>
-					<p>Xin lỗi, hiện tại chưa hỗ trợ dịch vụ này!</p>
 				</div>
 				<form class="w3-padding __formPhoneCard">
 					<div class="w3-section">
@@ -222,26 +216,28 @@ let Modal = {
 			$0.payInMethodInfo.hide();
 
 			$0.btnBankCard
-				.click(() => {
+				.click(event => {
 					$0.payInMethod.hide();
 					$0.bankCard.show();
 					$0.phoneCard.hide();
 				})
-				.hover(() => {
+				.on("mouseover focus", event => {
 					$0.payInMethodInfo.finish().text("Vietcombank, Agribank").show(200);
-				}, () => {
+				})
+				.on("mouseout blur", event => {
 					$0.payInMethodInfo.finish().hide(200).empty();
 				});
 
 			$0.btnPhoneCard
-				.click(() => {
+				.click(event => {
 					$0.payInMethod.hide();
 					$0.bankCard.hide();
 					$0.phoneCard.show();
 				})
-				.hover(() => {
+				.on("mouseover focus", event => {
 					$0.payInMethodInfo.finish().text("Viettel, MobiFone, VinaPhone").show(200);
-				}, () => {
+				})
+				.on("mouseout blur", event => {
 					$0.payInMethodInfo.finish().hide(200).empty();
 				});
 
@@ -367,10 +363,10 @@ let Modal = {
 			}
 
 			$0.files
-				.click(function() {
+				.click(function(event) {
 					this.value = "";
 				})
-				.change(function() {
+				.change(function(event) {
 					this.required = true;
 					$0.filezip.prop({
 						required: false,
@@ -379,10 +375,10 @@ let Modal = {
 				});
 
 			$0.filezip
-				.click(function() {
+				.click(function(event) {
 					this.value = "";
 				})
-				.change(function() {
+				.change(function(event) {
 					this.required = true;
 					$0.files.prop({
 						required: false,
@@ -509,7 +505,7 @@ let Modal = {
 			</form>
 		`, $0 => {
 			$0.name
-				.on("input", function() {
+				.on("input", function(event) {
 					this.setCustomValidity("");
 
 					if (!this.value.trim()) {
@@ -521,7 +517,7 @@ let Modal = {
 				});
 
 			$0.date
-				.on("input", function() {
+				.on("input", function(event) {
 					this.setCustomValidity("");
 
 					if (this.valueAsNumber > Date.now()) {
@@ -583,7 +579,7 @@ let Modal = {
 			</form>
 		`, $0 => {
 			$0.name
-				.on("input", function() {
+				.on("input", function(event) {
 					this.setCustomValidity("");
 
 					if (!this.value.trim()) {
@@ -640,7 +636,7 @@ let Modal = {
 			</form>
 		`, $0 => {
 			$0.date
-				.on("input", function() {
+				.on("input", function(event) {
 					this.setCustomValidity("");
 
 					if (this.valueAsNumber > Date.now()) {
@@ -822,7 +818,7 @@ let Modal = {
 			</form>
 		`, $0 => {
 			$0.name
-				.on("input", function() {
+				.on("input", function(event) {
 					this.setCustomValidity("");
 
 					if (!this.value.trim()) {
@@ -1251,7 +1247,7 @@ let Modal = {
 	},
 
 	setting() {
-		return modal("Cài đặt", 800, `
+		/*return modal("Cài đặt", 800, `
 			<form class="w3-row w3-section __form">
 				<div class="w3-col m6">
 					<label class="w3-col s8 w3-padding">Tối ưu hóa độ tương phản</label>
@@ -1286,6 +1282,6 @@ let Modal = {
 						break;
 				}
 			}
-		});
+		});*/
 	}
 };

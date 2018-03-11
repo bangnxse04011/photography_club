@@ -8,6 +8,8 @@ let
 	sett,
 	meToken,
 	xhrSearchSuggest,
+	key,
+	keydownOnce = true,
 	$viewImg,
 	$searchSuggest = $(searchSuggest);
 
