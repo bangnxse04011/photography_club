@@ -8,6 +8,7 @@ function loadSuggestAlbums() {
 		len: 20,
 		elm: $(".search"),
 		user_id: 0,
-		search: params.get("search")
+		search: params.get("search"),
+		isSearch: true
 	});
 }

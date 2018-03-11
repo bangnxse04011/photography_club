@@ -57,7 +57,7 @@ let Modal = {
 			});
 
 			fn($0);
-		});
+		}, true);
 	},
 
 	register() {

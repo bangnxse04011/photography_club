@@ -186,6 +186,7 @@ function getAlbums({
 	pages = true,
 	rand,
 	search,
+	isSearch,
 	/*
 		user_id = 0: Tất cả user
 		user_id = -1: Tất cả user trừ tôi
@@ -494,21 +495,34 @@ function getAlbums({
 				}
 			}
 			else {
-				let $content = $(`
-					<p class="w3-padding-small w3-text-gray">
-						Chưa có album ảnh nào, hãy <a href="javascript:" class="createAlbum">tạo một album mới</a>!
-					</p>
-				`);
+				if (!isSearch) {
+					let $content = $(`
+						<p class="w3-padding-small w3-text-gray">
+							Chưa có album ảnh nào, hãy <a href="javascript:" class="createAlbum">tạo một album mới</a>!
+						</p>
+					`);
+					elm.append($content);
 
-				elm.append($content);
-
-				$content
-					.find(".createAlbum")
-					.click(function() {
-						Modal.createAlbum(albumId => {
-							load();
+					$content
+						.find(".createAlbum")
+						.click(function() {
+							Modal.createAlbum(albumId => {
+								load();
+							});
 						});
-					});
+				}
+				else {
+					let $content = $(`
+						<div class="w3-padding-small w3-text-gray">
+							Không tìm thấy kết quả với từ khóa "<span class="keyword"></span>"
+						</div>
+					`);
+					elm.append($content);
+
+					$content
+						.find(".keyword")
+						.text(search);
+				}
 			}
 		});
 	}
@@ -520,7 +534,7 @@ function text(html) {
 	return (html + "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-function modal(title = "", css = "auto", html = "", js) {
+function modal(title = "", css = "auto", html = "", js, isOffAnimate) {
 	let $modal, $n, clsRand, fn, $$;
 
 	title = text(title);
@@ -565,7 +579,7 @@ function modal(title = "", css = "auto", html = "", js) {
 
 					setTimeout(() => {
 						$modal.remove();
-					}, 200);
+					}, isOffAnimate ? 0 : 200);
 				}
 			});
 
@@ -591,7 +605,13 @@ function modal(title = "", css = "auto", html = "", js) {
 	});
 
 	$n.modalContent.css(css);
-	$modal.data("$", () => $n);
+	$modal
+		.data("$", () => $n)
+		.click(function(event) {
+			if (event.target === this) {
+				$n.fn.close();
+			}
+		});
 
 	setTimeout(() => {
 		$n.modalContent.removeClass("anim-show-modal");
@@ -601,7 +621,7 @@ function modal(title = "", css = "auto", html = "", js) {
 		if (findAutofocus) {
 			findAutofocus.focus();
 		}
-	}, 200);
+	}, isOffAnimate ? 0 : 200);
 
 	$modal.show();
 

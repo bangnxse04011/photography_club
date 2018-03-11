@@ -7,11 +7,11 @@
 			<form class="w3-row-padding w3-margin-right __form">
 				<div class="w3-col m6 w3-margin-top">
 					<label class="w3-text-teal">Họ <span class="w3-text-red">*</span></label>
-					<input type="text" name="first_name" class="w3-input w3-border" value="<?php echo $me['first_name'] ?>" required>
+					<input type="text" name="first_name" class="w3-input w3-border" value="<?php echo $me['first_name'] ?>" min-length="1" max-length="50" required>
 				</div>
 				<div class="w3-col m6 w3-margin-top">
 					<label class="w3-text-teal">Tên <span class="w3-text-red">*</span></label>
-					<input type="text" name="last_name" class="w3-input w3-border" value="<?php echo $me['last_name'] ?>" required>
+					<input type="text" name="last_name" class="w3-input w3-border" value="<?php echo $me['last_name'] ?>" min-length="1" max-length="50" required>
 				</div>
 				<div class="w3-col m12 w3-margin-top">
 					<label class="w3-text-teal">Tên tài khoản </label>
@@ -19,7 +19,7 @@
 				</div>
 				<div class="w3-col m12 w3-margin-top">
 					<label class="w3-text-teal">Email <span class="w3-text-red">*</span></label>
-					<input type="email" name="email" class="w3-input w3-border" value="<?php echo $me['email'] ?>">
+					<input type="email" name="email" class="w3-input w3-border" value="<?php echo $me['email'] ?>" max-length="50">
 				</div>
 				<div class="w3-col m12 w3-margin-top">
 					<label class="w3-text-teal">Tiền </label>

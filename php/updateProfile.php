@@ -9,7 +9,7 @@ if ($meId) {
 	if (
 		$first_name &&
 		$last_name &&
-		preg_match('/.+@.+\..+/', $email)
+		(!$email || preg_match('/.+@.+\..+/', $email))
 	) {
 		$stm = $con->prepare("
 			UPDATE users
