@@ -57,8 +57,9 @@ if ($meId && $id > 0 && $album_id > 0) {
 						VALUES (?, ?, ?, ?, 1)
 					");
 					$stm->bind_param('siss', $name, $album_id, $date_upload, $type);
+					$stm->execute();
 
-					if ($stm->execute()) {
+					if ($con->affected_rows) {
 						$insert_id = $con->insert_id;
 
 						$img_album_id = $img['album_id'];
@@ -94,7 +95,9 @@ if ($meId && $id > 0 && $album_id > 0) {
 							$date,
 							$time
 						);
-						if ($stm->execute()) {
+						$stm->execute();
+						
+						if ($con->affected_rows) {
 							$img['id'] = $insert_id;
 
 							if (copy(

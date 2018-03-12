@@ -52,8 +52,9 @@ if ($meId && $id > 0 && $album_id > 0) {
 							AND a.status=1
 					");
 					$stm->bind_param('iiii', $album_id, $id, $album_id, $meId);
+					$stm->execute();
 
-					if ($stm->execute()) {
+					if ($con->affected_rows) {
 						$img_album_id = $img['album_id'];
 						$img_album_name = $img['album_name'];
 						$date = date('Y-m-d');

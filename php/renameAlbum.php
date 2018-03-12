@@ -39,8 +39,9 @@ if ($meId && preg_match('/^.{1,200}$/', $name) && $album_id > 0) {
 						WHERE id=? AND user_id=? AND status=1
 					");
 					$stm->bind_param('sii', $name, $album_id, $meId);
+					$stm->execute();
 
-					if ($stm->execute()) {
+					if ($con->affected_rows) {
 						$date = date('Y-m-d');
 						$time = date('H:i:s');
 
@@ -64,8 +65,9 @@ if ($meId && preg_match('/^.{1,200}$/', $name) && $album_id > 0) {
 							$date,
 							$time
 						);
+						$stm->execute();
 
-						if ($stm->execute()) {
+						if ($con->affected_rows) {
 							$con->commit();
 							exit;
 						}

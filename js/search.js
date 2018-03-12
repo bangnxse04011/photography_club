@@ -9,6 +9,6 @@ function loadSuggestAlbums() {
 		elm: $(".search"),
 		user_id: 0,
 		search: params.get("search"),
-		isSearch: true
+		isNotHasCreateAlbum: true
 	});
 }

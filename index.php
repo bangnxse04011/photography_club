@@ -31,7 +31,7 @@
 
 			<?php
 			require 'js/init.php';
-			// require 'js/social.js';
+			require 'js/social.js';
 			require 'js/func.js';
 			require 'js/modal.js';
 			require 'js/script.js';

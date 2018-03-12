@@ -7,7 +7,8 @@ function loadHome() {
 		elm: $(".homeSuggestAlbum"),
 		pages: false,
 		rand: true,
-		user_id: -1
+		user_id: -1,
+		isNotHasCreateAlbum: true
 	});
 
 	if (meId) {

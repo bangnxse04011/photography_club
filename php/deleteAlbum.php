@@ -24,16 +24,18 @@ if ($meId && $id > 0) {
 				WHERE id=?
 			");
 			$stm->bind_param('i', $id);
+			$stm->execute();
 
-			if ($stm->execute()) {
+			if ($con->affected_rows) {
 				$stm = $con->prepare("
 					UPDATE imgs
 					SET status=0
 					WHERE album_id=? AND status=1
 				");
 				$stm->bind_param('i', $id);
+				$stm->execute();
 
-				if ($stm->execute()) {
+				if ($con->affected_rows) {
 					$date = date('Y-m-d');
 					$time = date('H:i:s');
 
@@ -55,8 +57,9 @@ if ($meId && $id > 0) {
 						$date,
 						$time
 					);
+					$stm->execute();
 
-					if ($stm->execute()) {
+					if ($con->affected_rows) {
 						$con->commit();
 						exit;
 					}

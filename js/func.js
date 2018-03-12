@@ -24,7 +24,7 @@ function getAlbum({
 					.find(".price")
 						.text(currencyFormat.format(album.price))
 						.end()
-					.find(".user_name")
+					.find(".full_name")
 						.text(`${album.user_first_name} ${album.user_last_name}`)
 						.end()
 					.find(".date_last_upload")
@@ -53,7 +53,7 @@ function getAlbum({
 						$img = $(`
 							<div class="w3-col s12 m${col < 6 ? col + 1 : col} l${col} w3-margin-bottom">
 								<div class="w3-display-container w3-card w3-white w3-hover-shadow w3-pointer w3-animate-opacity">
-									<div class="img"></div>
+									<div class="w3-img-contrast img"></div>
 									<div class="w3-display-bottommiddle w3-display-hover w3-block w3-text-white w3-noevent" style="padding:64px 8px 12px;background:linear-gradient(#2220, #2227, #222a)">
 										<div class="w3-ellipsis name"></div>
 									</div>
@@ -155,11 +155,16 @@ function getAlbum({
 								});
 
 						if (album.user_id !== meId) {
-							// $(".downloadImg").siblings().remove();
+							$img
+								.find(".downloadImg")
+								.siblings()
+									.remove();
 						}
 
 						// Tạm thời loại bỏ download ảnh
-						$img.find(".downloadImg").remove();
+						$img
+							.find(".downloadImg")
+								.remove();
 					}
 				}
 				else {
@@ -186,7 +191,7 @@ function getAlbums({
 	pages = true,
 	rand,
 	search,
-	isSearch,
+	isNotHasCreateAlbum,
 	/*
 		user_id = 0: Tất cả user
 		user_id = -1: Tất cả user trừ tôi
@@ -495,7 +500,15 @@ function getAlbums({
 				}
 			}
 			else {
-				if (!isSearch) {
+				if (isNotHasCreateAlbum) {
+					let $content = $(`
+						<div class="w3-padding-small w3-text-gray">
+							Không có album nào!
+						</div>
+					`);
+					elm.append($content);
+				}
+				else {
 					let $content = $(`
 						<p class="w3-padding-small w3-text-gray">
 							Chưa có album ảnh nào, hãy <a href="javascript:" class="createAlbum">tạo một album mới</a>!
@@ -510,14 +523,6 @@ function getAlbums({
 								load();
 							});
 						});
-				}
-				else {
-					let $content = $(`
-						<div class="w3-padding-small w3-text-gray">
-							Không tìm thấy kết quả với từ khóa "${text(search)}"
-						</div>
-					`);
-					elm.append($content);
 				}
 			}
 		});
@@ -637,16 +642,16 @@ function active(elm, lv, hasClass, addClass, removeClass) {
 			.parent()
 			.siblings(hasClass)
 			.children()
-			.removeClass(addClass)
-			.addClass(removeClass);
+				.removeClass(addClass)
+				.addClass(removeClass);
 	}
 	else {
 		$(elm)
 			.addClass(addClass)
 			.removeClass(removeClass)
 			.siblings(hasClass)
-			.removeClass(addClass)
-			.addClass(removeClass);
+				.removeClass(addClass)
+				.addClass(removeClass);
 	}
 }
 

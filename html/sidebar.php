@@ -3,7 +3,7 @@
 		<img src="https://png.icons8.com/material/24/home.png">
 		<span class="w3-margin-left">Trang chủ</span>
 	</a>
-	<a href="?view=myAlbums" class="w3-bar-item w3-button history" data-view="history">
+	<a href="?view=myAlbums" class="w3-bar-item w3-button history" data-view="myAlbums">
 		<img src="https://png.icons8.com/material/24/stack-of-photos.png">
 		<span class="w3-margin-left">Album của tôi</span>
 	</a>

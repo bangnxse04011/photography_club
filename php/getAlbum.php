@@ -29,7 +29,12 @@ if ($id > 0 && $start >= 0 && $len > 0) {
 		$album['num_img'] = 0;
 		$album['imgs'] = [];
 
-		$stm = $con->prepare("SELECT count(*) FROM imgs WHERE album_id=? AND status=1");
+		$stm = $con->prepare("
+			SELECT count(*)
+			FROM imgs
+			WHERE album_id=?
+				AND status=1
+		");
 		$stm->bind_param('i', $id);
 		$stm->execute();
 

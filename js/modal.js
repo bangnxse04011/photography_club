@@ -109,18 +109,18 @@ let Modal = {
 				</form>
 			</div>
 		`, $0 => {
-			// googleSignin($0.google[0], gUser => {
-			// 	$.post("php/registerGoogle.php", {
-			// 		id_token: gUser.getAuthResponse().id_token
-			// 	}, err => {
-			// 		if (err) {
-			// 			Modal.alert(err);
-			// 		}
-			// 		else {
-			// 			location.href = "";
-			// 		}
-			// 	});
-			// });
+			googleSignin($0.google[0], gUser => {
+				$.post("php/registerGoogle.php", {
+					id_token: gUser.getAuthResponse().id_token
+				}, err => {
+					if (err) {
+						Modal.alert(err);
+					}
+					else {
+						location.href = "";
+					}
+				});
+			});
 
 			$0.form.submit(function(event) {
 				event.preventDefault();
@@ -769,16 +769,28 @@ let Modal = {
 			}
 
 			function download() {
-				Modal.confirm(
-					`Bạn chắc chắn muốn tải album "${album.name}" với giá ${currencyFormat.format(album.price)} không?`,
-					() => {
-						let a;
+				if (album.user_id === meId) {
+					Modal.alert(
+						"Đây là album của bạn nên bạn có thể tải xuống miễn phí",
+						downloadLink
+					)
+				}
+				else {
+					Modal.confirm(
+						`Bạn chắc chắn muốn tải album "${album.name}" với giá ${currencyFormat.format(album.price)} không?`,
+						downloadLink
+					);
+				}
 
-						a = document.createElement("a");
-						a.href = `php/downloadAlbum.php?id=${album.id}&token=${meToken}`;
-						a.download = `${album.id}.zip`;
-					}
-				);
+				function downloadLink() {
+					let a;
+
+					a = document.createElement("a");
+					a.href = `php/downloadAlbum.php?id=${album.id}&token=${meToken}`;
+					a.download = `${album.id}-${meId}.zip`;
+
+					a.click();
+				}
 			}
 		}
 		else {

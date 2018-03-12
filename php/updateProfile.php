@@ -26,8 +26,9 @@ if ($meId) {
 			$email,
 			$meId
 		);
+		$stm->execute();
 
-		if ($stm->execute()) {
+		if ($con->affected_rows) {
 			echo '1';
 		}
 		else {

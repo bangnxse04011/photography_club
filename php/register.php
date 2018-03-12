@@ -38,14 +38,16 @@ if (!$meId) {
 					'ssssss',
 					$name, $pass, $first_name, $last_name, $email, $date_created
 				);
+				$stm->execute();
 
-				if ($stm->execute()) {
+				if ($con->affected_rows) {
 					$stm = $con->prepare("
 						INSERT INTO users_setting ()
 						VALUES ()
 					");
+					$stm->execute();
 
-					if ($stm->execute()) {
+					if ($con->affected_rows) {
 						$_SESSION['id'] = $con->insert_id;
 
 						$con->commit();

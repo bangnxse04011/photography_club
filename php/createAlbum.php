@@ -55,8 +55,9 @@ if (
 				$meId,
 				$price
 			);
+			$stm->execute();
 
-			if ($stm->execute()) {
+			if ($con->affected_rows) {
 				$insert_id = $con->insert_id;
 
 				$stm = $con->prepare("
@@ -77,8 +78,9 @@ if (
 					$date,
 					$time
 				);
+				$stm->execute();
 
-				if ($stm->execute()) {
+				if ($con->affected_rows) {
 					$con->commit();
 					echo $insert_id;
 					exit;

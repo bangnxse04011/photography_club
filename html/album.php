@@ -11,7 +11,7 @@
 				<div class="w3-col m6">
 					<div class="w3-row">
 						<div class="w3-col s4 w3-text-teal">Người tạo: </div>
-						<div class="w3-col s8 w3-text-dark-gray user_name"></div>
+						<div class="w3-col s8 w3-text-dark-gray full_name"></div>
 					</div>
 					<div class="w3-row">
 						<div class="w3-col s4 w3-text-teal">Ngày chụp: </div>

@@ -28,8 +28,9 @@ if ($meId && $id > 0) {
 				WHERE i.id=?
 			");
 			$stm->bind_param('i', $id);
+			$stm->execute()
 
-			if ($stm->execute()) {
+			if ($con->affected_rows) {
 				$date = date('Y-m-d');
 				$time = date('H:i:s');
 
@@ -50,8 +51,9 @@ if ($meId && $id > 0) {
 					$date,
 					$time
 				);
+				$stm->execute();
 
-				if ($stm->execute()) {
+				if ($con->affected_rows) {
 					$con->commit();
 					exit;
 				}

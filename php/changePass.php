@@ -25,8 +25,9 @@ if ($meId && $pass && $newpass) {
 				WHERE id=?
 			");
 			$stm->bind_param('si', $newpass, $meId);
+			$stm->execute();
 
-			if (!$stm->execute()) {
+			if (!$con->affected_rows) {
 				die('Đổi mật khẩu thất bại.');
 			}
 		}

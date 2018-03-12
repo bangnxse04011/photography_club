@@ -15,8 +15,9 @@ if (
 		WHERE id=? AND user_id=? AND status=1
 	");
 	$stm->bind_param('sii', $location, $album_id, $meId);
+	$stm->execute();
 
-	if (!$stm->execute()) {
+	if (!$con->affected_rows) {
 		die('Sửa địa điểm album thất bại.');
 	}
 }
