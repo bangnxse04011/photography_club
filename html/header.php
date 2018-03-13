@@ -1,7 +1,7 @@
 <div id="header" class="w3-row w3-bar w3-card w3-white">
 	<div class="w3-col s9 m3">
 		<img id="btnSidebar" class="w3-button" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAA2SURBVEhL7dGxDQAwDAJB9l/aGYDvSGHJnPQdHapb5nOGRkm1EB2VZGiUVAvRUUmGRkl1g/QA8+53if5aVp8AAAAASUVORK5CYII=">
-		<a href="." class="w3-button w3-hover-none"><b>VILUCKY</b></a>
+		<a href="." class="w3-button w3-hover-none"><img src="favicon.ico"/><b>VILUCKY</b></a>
 	</div>
 	<div class="w3-col s3 w3-padding-bottom w3-hide-medium w3-hide-large userBtnSm">asd</div>
 	<form method="get" id="frmSearch" class="w3-col m5">
