@@ -2,6 +2,6 @@ RewriteEngine on
 
 ErrorDocument 404 /PhotographyClub/?view=404
 
-php_value upload_max_filesize 500M
+php_value upload_max_filesize 1000M
 php_value max_file_uploads 20
-php_value post_max_size 500M
+php_value post_max_size 1000M
