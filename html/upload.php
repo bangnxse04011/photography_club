@@ -40,16 +40,13 @@
 									if ($files['error'][$i] === 0) {
 										if (preg_match('/^image\/(png|jpg|jpeg|gif)$/', $files['type'][$i])) {
 											if ($files['size'][$i] <= 1024 * 1024 * 25) {
-												$pathinfo = pathinfo($files['name'][$i]);
+												$pathinfo = pathinfo(strtolower($files['name'][$i]));
 
 												$name = $pathinfo['filename'];
 												$type = $pathinfo['extension'];
 
 												$con->begin_transaction();
 
-											if($type == 'JPG') {
-												$type = strtoupper($type);
-											}
 												$stm = $con->prepare("
 													INSERT INTO imgs (name, album_id, date_upload, type)
 													VALUES (?, ?, ?, ?)
