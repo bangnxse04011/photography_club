@@ -47,6 +47,9 @@
 
 												$con->begin_transaction();
 
+											if($type == 'JPG') {
+												$type = strtoupper($type);
+											}
 												$stm = $con->prepare("
 													INSERT INTO imgs (name, album_id, date_upload, type)
 													VALUES (?, ?, ?, ?)
